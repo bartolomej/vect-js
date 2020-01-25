@@ -4,8 +4,16 @@ export default class Matrix {
 
   components: Array<Vector>;
 
-  constructor (components: Array<Vector>) {
-    this.components = components;
+  constructor (components: Array<any>) {
+    if (components[0] instanceof Vector) {
+      // @ts-ignore
+      this.components = components;
+    } else if (typeof components[0][0] === 'number') {
+      // @ts-ignore
+      this.components = components.map(e => new Vector(e));
+    } else {
+      throw new Error('Invalid matrix components.')
+    }
   }
 
   get rows () {
@@ -16,10 +24,30 @@ export default class Matrix {
     return this.components.length;
   }
 
+  get x () {
+    return this.components[0];
+  }
+
+  get y () {
+    return this.components[1];
+  }
+
+  get z () {
+    return this.components[2];
+  }
+
   add (m: Matrix) {
     let comp = [];
     for (let i = 0; i < this.cols; i++) {
       comp.push(this.components[i].add(m.components[i]));
+    }
+    return new Matrix(comp);
+  }
+
+  matrixProduct (m: Matrix) {
+    let comp = [];
+    for (let i = 0; i < this.cols; i++) {
+      comp.push(this.vectorProduct(m.components[i]));
     }
     return new Matrix(comp);
   }
@@ -33,14 +61,11 @@ export default class Matrix {
   }
 
   vectorProduct (v: Vector) {
-    if (this.cols !== v.dimensions) {
-      return undefined;
-    }
-    let comp = [];
+    let T = new Vector(new Array(this.cols).fill(0));
     for (let i = 0; i < this.cols; i++) {
-      comp.push(this.components[i].scalarProduct(v.components[i]));
+      T = T.add(this.components[i].scalarProduct(v.components[i]));
     }
-    return new Matrix(comp);
+    return T;
   }
 
 }

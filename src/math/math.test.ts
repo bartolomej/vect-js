@@ -43,6 +43,14 @@ describe('Test vector class', function () {
 
 describe('Test matrix class', function () {
 
+  it('should initialize matrix by array', function () {
+    let m1 = new Matrix([[1,0], [0,1]]);
+    expect(m1).toEqual(new Matrix([
+      new Vector([1,0]),
+      new Vector([0,1])
+    ]))
+  });
+
   it('should add unit matrices', function () {
     let m1 = new Matrix([
       new Vector([1,0,0]),
@@ -61,7 +69,7 @@ describe('Test matrix class', function () {
     ]));
   });
 
-  it('should multiply matrix by a scalar', function () {
+  it('should multiply matrix - scalar', function () {
     let m1 = new Matrix([
       new Vector([1,0,0]),
       new Vector([0,2,0]),
@@ -74,18 +82,32 @@ describe('Test matrix class', function () {
     ]));
   });
 
-  it('should multiply matrix by a vector', function () {
+  it('should multiply matrix - vector', function () {
     let m1 = new Matrix([
       new Vector([1,0,0]),
       new Vector([0,1,0]),
       new Vector([0,0,1])
     ]);
     let v1 = new Vector([1,2,3]);
-    expect(m1.vectorProduct(v1)).toEqual(new Matrix([
+    expect(m1.vectorProduct(v1)).toEqual(new Vector([1,2,3]));
+  });
+
+  it('should multiply matrix - matrix', function () {
+    let m1 = new Matrix([
       new Vector([1,0,0]),
-      new Vector([0,2,0]),
-      new Vector([0,0,3])
-    ]));
+      new Vector([0,1,0]),
+      new Vector([0,0,1])
+    ]);
+    let m2 = new Matrix([
+      new Vector([2,0,0]),
+      new Vector([0,3,0]),
+      new Vector([0,0,4])
+    ]);
+    expect(m1.matrixProduct(m2)).toEqual(new Matrix([
+      new Vector([2,0,0]),
+      new Vector([0,3,0]),
+      new Vector([0,0,4])
+    ]))
   });
 
 });

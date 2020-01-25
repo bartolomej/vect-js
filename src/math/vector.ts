@@ -1,3 +1,5 @@
+import Matrix from "./matrix";
+
 export default class Vector {
 
   components: Array<number>;
@@ -10,6 +12,17 @@ export default class Vector {
     return this.components.length;
   }
 
+  get x () {
+    return this.components[0];
+  }
+
+  get y () {
+    return this.components[1];
+  }
+
+  get z () {
+    return this.components[2];
+  }
 
   abs () {
     let sqSum = 0;
@@ -38,22 +51,22 @@ export default class Vector {
     if (this.dimensions !== a.dimensions) {
       return undefined;
     }
-    let sum = [];
+    let comp = [];
     for (let i = 0; i < this.dimensions; i++) {
-      sum.push(this.components[i] + a.components[i]);
+      comp.push(this.components[i] + a.components[i]);
     }
-    return new Vector(sum);
+    return new Vector(comp);
   }
 
   subtract (a: Vector) {
     if (this.dimensions !== a.dimensions) {
       return undefined;
     }
-    let sum = [];
+    let comp = [];
     for (let i = 0; i < this.dimensions; i++) {
-      sum.push(this.components[i] - a.components[i]);
+      comp.push(this.components[i] - a.components[i]);
     }
-    return new Vector(sum);
+    return new Vector(comp);
   }
 
   equals (a: Vector) {
