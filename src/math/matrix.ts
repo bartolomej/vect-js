@@ -36,6 +36,21 @@ export default class Matrix {
     return this.components[2];
   }
 
+  determinate2D () {
+    return (
+      (this.components[1].y * this.components[0].x) -
+      (this.components[1].x * this.components[0].y)
+    );
+  }
+
+  inverse2D () {
+    let t = new Matrix([
+      [this.components[1].y, -this.components[0].y],
+      [-this.components[1].x, this.components[0].x]
+    ]);
+    return t.scalarProduct(1 / this.determinate2D())
+  }
+
   add (m: Matrix) {
     let comp = [];
     for (let i = 0; i < this.cols; i++) {
@@ -66,6 +81,15 @@ export default class Matrix {
       T = T.add(this.components[i].scalarProduct(v.components[i]));
     }
     return T;
+  }
+
+  toString () {
+    let out = '[';
+    for (let i = 0; i < this.cols; i++) {
+      out += this.components[i].toString() + (i + 1 === this.cols ? '' : ', ');
+    }
+    out += ']';
+    return out;
   }
 
 }

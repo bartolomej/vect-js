@@ -1,18 +1,37 @@
-import { Canvas, Matrix, Vector, VectorCanvas, CircleCanvas, TextCanvas } from "../index";
+import { Canvas, Matrix, Vector, VectorCanvas } from "../index";
+// @ts-ignore
+import * as chroma from 'chroma-js';
 
-window.onload = function () {
+window.onload = vectorField;
+
+function vectorField () {
   const container = document.getElementById('canvas-container');
   const canvas = new Canvas(container);
-  canvas.transform(new Matrix([[1,0],[0,1]]));
+  const maxSpan = canvas.getMax();
+  const diff = 50;
 
-  const v1 = new Vector([100,100]);
-  const v1Shape = new VectorCanvas(new Vector([100,100]), v1);
-  canvas.addShape(v1Shape);
+  function getSpeed (position: Vector, time: number) {
+    return new Vector([
+      Math.sin(position.x + position.y + time),
+      Math.sin(position.x + time) + Math.cos(time)
+    ]);
+  }
 
-  const p1 = new Vector([-100,100]);
-  const p1Shape = new CircleCanvas(p1, 50);
-  canvas.addShape(p1Shape);
-
-  const t1 = new TextCanvas('a', 0,0);
-  canvas.addShape(t1);
-};
+  for (let y = maxSpan.y - diff; y > -maxSpan.y; y -= diff) {
+    for (let x = maxSpan.x - diff; x > -maxSpan.x + diff; x -= diff) {
+      let p = new Vector([x, y]);
+      let v = new Vector([Math.cos(x) * 30, Math.sin(y) * 30]);
+      let s = new VectorCanvas(p, v);
+      canvas.addShape(s);
+      s.onUpdate = function (time: number) {
+        const v = getSpeed(this.start, time);
+        this.vector = this.vector.add(v);
+        this.renderVector = this.vector.scalarProduct(Math.pow(this.vector.abs(), -1) * 30);
+        this.color = chroma(this.vector.abs(), 1, 0.6, 'hsl').desaturate(0.5).hex();
+      };
+    }
+  }
+  canvas.onUpdate = function () {
+    this.transform(new Matrix([[0.9999, 0], [0, 0.9999]]));
+  }
+}

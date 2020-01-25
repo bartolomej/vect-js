@@ -1,10 +1,12 @@
+import { CanvasShape, UpdateFunction } from "../canvas";
+
 export enum Weight {
   BOLD = 'bold',
   NORMAL = 'normal',
   LIGHTER = 'lighter'
 }
 
-export default class TextCanvas {
+export default class TextCanvas implements CanvasShape {
 
   x: number;
   y: number;
@@ -12,6 +14,7 @@ export default class TextCanvas {
   size: number;
   color: string;
   weight: Weight;
+  onUpdate: UpdateFunction;
 
   constructor (text: string, x: number, y: number, size?: number, color?: string, weight?: Weight) {
     this.x = x;

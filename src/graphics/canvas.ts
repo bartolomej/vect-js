@@ -2,10 +2,15 @@ import { Matrix, Vector } from '../math'
 
 export interface CanvasShape {
   draw: DrawFunction;
+  onUpdate: UpdateFunction;
 }
 
-interface DrawFunction {
+export interface DrawFunction {
   (ctx: CanvasRenderingContext2D): void;
+}
+
+export interface UpdateFunction {
+  (t: number): void;
 }
 
 export default class Canvas {
@@ -20,18 +25,18 @@ export default class Canvas {
   transformMatrix: Matrix;
   translateVector: Vector;
 
-  onTick: Function;
+  onUpdate: Function;
   ticker: number;
 
   constructor (container: HTMLElement) {
     this.container = container;
     this.externalShapes = [];
     this.internalShapes = [];
-    this.onTick = null;
     this.ticker = 0;
     this.transformMatrix = new Matrix([[1, 0], [0, 1]]);
     this.translateVector = new Vector([0, 0]);
     this.createCanvas();
+    this.startRender();
   }
 
   // initial translation => moves origin to canvas center
@@ -75,13 +80,19 @@ export default class Canvas {
     this.externalShapes.push(s);
   }
 
+  // returns max x,y value that is visible on canvas
+  getMax () {
+    let t = new Vector([0, 0]).add(this.getTranslate());
+    let v = this.getTransform().inverse2D().vectorProduct(t);
+    return new Vector([Math.abs(v.x), Math.abs(v.y)]);
+  }
+
   private createCanvas () {
     const canvas = document.createElement('canvas');
     canvas.width = this.container.clientWidth;
     canvas.height = this.container.clientHeight;
     this.container.appendChild(canvas);
     this.ctx = canvas.getContext('2d');
-    this.animationFrame = requestAnimationFrame(this.render.bind(this));
     window.addEventListener('resize', this.onWindowResize.bind(this));
   }
 
@@ -91,8 +102,45 @@ export default class Canvas {
     this.ctx.canvas.height = this.container.clientHeight;
   }
 
-  stopRendering () {
+  private drawBasis () {
+    const limit = this.getMax();
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = 'rgba(0,0,0,1)';
+    this.ctx.lineWidth = 2;
+    line(this.ctx, new Vector([0, 0]), new Vector([0, limit.y]));
+    line(this.ctx, new Vector([0, 0]), new Vector([limit.x, 0]));
+    this.ctx.stroke();
+  }
+
+  private drawGrid () {
+    const limit = this.getMax();
+    const d = 50;
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+    this.ctx.lineWidth = 1;
+    // VERTICAL LINES
+    for (let x = 0; x < limit.x; x += d) {
+      line(this.ctx, new Vector([x, 0]), new Vector([x, limit.y]));
+    }
+    for (let x = 0; x > -limit.x; x -= d) {
+      line(this.ctx, new Vector([x, 0]), new Vector([x, limit.y]));
+    }
+    // HORIZONTAL LINES
+    for (let y = 0; y < limit.y; y += d) {
+      line(this.ctx, new Vector([0, y]), new Vector([limit.x, y]));
+    }
+    for (let y = 0; y > -limit.y; y -= d) {
+      line(this.ctx, new Vector([0, y]), new Vector([limit.x, y]));
+    }
+    this.ctx.stroke();
+  }
+
+  stopRender () {
     cancelAnimationFrame(this.animationFrame);
+  }
+
+  startRender () {
+    this.animationFrame = requestAnimationFrame(this.render.bind(this));
   }
 
   render () {
@@ -104,11 +152,25 @@ export default class Canvas {
     const t = this.getTranslate();
     this.ctx.transform(m.x.x, m.x.y, m.y.x, m.y.y, t.x, t.y);
 
+    this.drawGrid();
+    this.drawBasis();
+
+    if (this.onUpdate) this.onUpdate.call(this);
+
     for (let shape of this.externalShapes) {
+      if (shape.onUpdate) shape.onUpdate.call(shape, this.ticker);
       shape.draw(this.ctx);
     }
 
+    this.ticker += 0.01;
     this.animationFrame = requestAnimationFrame(this.render.bind(this));
   }
 
+}
+
+function line (ctx: any, p0: Vector, p1: Vector) {
+  ctx.moveTo(p0.x, p0.y);
+  ctx.lineTo(p1.x, p1.y);
+  ctx.moveTo(-p0.x, -p0.y);
+  ctx.lineTo(-p1.x, -p1.y);
 }

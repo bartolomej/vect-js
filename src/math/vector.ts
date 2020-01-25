@@ -1,5 +1,3 @@
-import Matrix from "./matrix";
-
 export default class Vector {
 
   components: Array<number>;
@@ -27,7 +25,7 @@ export default class Vector {
   abs () {
     let sqSum = 0;
     for (let i of this.components) {
-      sqSum += i**2;
+      sqSum += i ** 2;
     }
     return Math.sqrt(sqSum);
   }
@@ -74,6 +72,15 @@ export default class Vector {
       if (this.components[i] !== a.components[i]) return false;
     }
     return true;
+  }
+
+  toString () {
+    let out = '[';
+    for (let i = 0; i < this.dimensions; i++) {
+      out += this.components[i] + (i + 1 === this.dimensions ? '' : ',');
+    }
+    out += ']';
+    return out;
   }
 
 }

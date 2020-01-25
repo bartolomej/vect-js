@@ -1,4 +1,4 @@
-import { CanvasShape } from "../canvas";
+import { CanvasShape, UpdateFunction } from "../canvas";
 import { Vector } from "../../math";
 
 export default class CircleCanvas implements CanvasShape {
@@ -7,6 +7,7 @@ export default class CircleCanvas implements CanvasShape {
   r: number;
   color: string;
   name: string;
+  onUpdate: UpdateFunction;
 
   constructor (position: Vector, r: number, color?: string, name?: string) {
     this.position = position;

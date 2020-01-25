@@ -1,29 +1,35 @@
 import { Vector } from "../../math";
-import { CanvasShape } from "../canvas";
+import { CanvasShape, UpdateFunction } from "../canvas";
 
-export default class VectorCanvas implements CanvasShape{
+export default class VectorCanvas implements CanvasShape {
 
   color: string;
   name: string;
   start: Vector;
   vector: Vector;
+  renderVector: Vector;
+  onUpdate: UpdateFunction;
 
   constructor (v0: Vector, v1: Vector, color?: string, name?: string) {
-    this.start = v0 || new Vector([0,0]);
+    this.start = v0 || new Vector([0, 0]);
     this.vector = v1;
     this.color = color || '#000000';
     this.name = name || 'a';
   }
 
   get end () {
-    return this.start.add(this.vector);
+    if (this.renderVector) {
+      return this.start.add(this.renderVector);
+    } else {
+      return this.start.add(this.vector);
+    }
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    const s = 7;
-    const w = 0.7;
+    const size = 10;
+    const width = 0.7;
 
-    let a = Math.atan(this.end.y / this.end.x);
+    let a = Math.atan(this.vector.y / this.vector.x);
 
     ctx.strokeStyle = this.color;
     ctx.fillStyle = this.color;
@@ -34,12 +40,17 @@ export default class VectorCanvas implements CanvasShape{
     ctx.lineTo(this.end.x, this.end.y);
     ctx.moveTo(this.end.x, this.end.y);
 
-    if (this.end.x < 0) {
-      ctx.lineTo(this.end.x + Math.cos(a - w) * s, this.end.y + Math.sin(a - w) * s);
-      ctx.lineTo(this.end.x + Math.cos(a + w) * s, this.end.y + Math.sin(a + w) * s);
+    const dxLeft = Math.cos(a - width) * size;
+    const dxRight = Math.cos(a + width) * size;
+    const dyTop = Math.sin(a - width) * size;
+    const dyBottom = Math.sin(a + width) * size;
+
+    if (this.vector.x < 0) {
+      ctx.lineTo(this.end.x + dxLeft, this.end.y + dyTop);
+      ctx.lineTo(this.end.x + dxRight, this.end.y + dyBottom);
     } else {
-      ctx.lineTo(this.end.x - Math.cos(a - w) * s, this.end.y - Math.sin(a - w) * s);
-      ctx.lineTo(this.end.x - Math.cos(a + w) * s, this.end.y - Math.sin(a + w) * s);
+      ctx.lineTo(this.end.x - dxLeft, this.end.y - dyTop);
+      ctx.lineTo(this.end.x - dxRight, this.end.y - dyBottom);
     }
     ctx.closePath();
     ctx.fill();
