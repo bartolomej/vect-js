@@ -1,5 +1,7 @@
 # Vect
 
+![](https://img.shields.io/npm/v/vect-js)
+
 > vect-js library makes it easier to create interactive
 > mathematical simulation or animations for the web
 

@@ -24,12 +24,6 @@ module.exports = merge(common, {
         from: path.resolve(__dirname, 'docs', 'index.html'),
         to: path.resolve(__dirname, 'build')
       }
-    ]),
-    new CopyPlugin([
-      {
-        from: path.resolve(__dirname, 'docs', 'style.css'),
-        to: path.resolve(__dirname, 'build')
-      }
-    ]),
+    ])
   ],
 });

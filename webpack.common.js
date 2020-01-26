@@ -28,14 +28,10 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.css', '.ts', '.js' ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
   ],
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name]'
-  }
 };

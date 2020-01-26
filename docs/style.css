@@ -1,5 +1,67 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,500,700&display=swap');
+
 * {
     margin: 0;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+}
+
+#container {
+    width: 40%;
+    margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+    #container {
+        width: 90%;
+    }
+}
+
+h1 {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+h4 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+#docs code {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+    font-size: 0.8em;
+}
+
+#docs pre {
+    padding: 20px !important;
+    border-radius: 20px;
+}
+
+#docs p > code {
+    padding: .2em .4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(27,31,35,.05);
+    border-radius: 3px;
+}
+
+#examples {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#examples button {
+    outline: none;
+    cursor: pointer;
 }
 
 #canvas-container {
