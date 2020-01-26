@@ -1,4 +1,4 @@
-import * as marked from 'marked';
+import marked from 'marked';
 import vectorField from './vector-field';
 // @ts-ignore
 import { highlightBlock } from 'highlight.js';

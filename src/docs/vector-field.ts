@@ -1,10 +1,10 @@
-import vectjs, { Circle, Matrix, Vector, VectorArrow } from "../src";
-import * as chroma from 'chroma-js';
+import { Canvas, Circle, Matrix, Vector, VectorArrow } from "../index";
+import chroma from 'chroma-js';
 
 
 export default function () {
   const container = document.getElementById('canvas-container');
-  const vect = vectjs({
+  const vect = new Canvas({
     container,
     backgroundColor: '#000000',
     displayNumbers: false,

@@ -1,17 +1,17 @@
 {
   "name": "vect-js",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Mathematical animation engine for the web.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/types",
   "scripts": {
     "watch": "webpack --watch",
     "test": "jest",
-    "build": "webpack --config webpack.prod.js",
-    "build-examples": "webpack --config webpack.dev.js",
-    "deploy": "npm run build-examples && node deploy.js",
+    "build": "tsc --module commonjs",
+    "build:docs": "webpack --config webpack.dev.js",
+    "deploy:docs": "npm run build-examples && node deploy.js",
     "start": "npm run serve && npm run watch",
-    "publish": "npm build && npm publish",
+    "publish:patch": "npm version patch --no-git-tag-version && npm build && npm publish",
     "serve": "webpack-dev-server --open --config webpack.dev.js"
   },
   "repository": {

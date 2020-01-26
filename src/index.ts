@@ -1,4 +1,4 @@
-import Canvas, { CanvasParams } from "./graphics/canvas";
+import Canvas from "./graphics/canvas";
 import Matrix from "./math/matrix";
 import Vector from "./math/vector";
 import VectorArrow from "./graphics/shapes/vector";
@@ -10,9 +10,6 @@ export {
   Text,
   Circle,
   Matrix,
-  Vector
+  Vector,
+  Canvas
 };
-
-export default function (params: CanvasParams) {
-  return new Canvas(params);
-}

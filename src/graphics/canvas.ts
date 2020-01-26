@@ -1,6 +1,5 @@
 import { Matrix, Vector } from '../math'
 import Text from "./shapes/text";
-import * as chroma from 'chroma-js';
 
 
 export interface CanvasParams {
@@ -184,7 +183,7 @@ export default class Canvas {
   private drawGrid () {
     const limit = this.getMax();
     this.ctx.beginPath();
-    this.ctx.strokeStyle = chroma(invertColor(this.backgroundColor)).alpha(0.5).hex();
+    this.ctx.strokeStyle = invertColor(this.backgroundColor) + '80';
     this.ctx.lineWidth = 1;
     // VERTICAL LINES
     for (let x = 0; x < limit.x; x += this.coordinatesDelta) {

@@ -1,2 +1,12 @@
 tsconfig.json
+babel.config.js
+deploy.js
+jest.config.js
+webpack.common.js
+webpack.dev.js
+webpack.prod.js
+.idea
 src
+dist/**.test.js
+docs
+build

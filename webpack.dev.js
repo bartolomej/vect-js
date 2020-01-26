@@ -11,7 +11,7 @@ module.exports = merge(common, {
   },
   entry: {
     'index.js': [
-      path.resolve(__dirname, './docs/index.ts')
+      path.resolve(__dirname, 'src', 'docs', 'index.ts')
     ]
   },
   output: {
@@ -21,7 +21,7 @@ module.exports = merge(common, {
   plugins: [
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, 'docs', 'index.html'),
+        from: path.resolve(__dirname, 'src', 'docs', 'index.html'),
         to: path.resolve(__dirname, 'build')
       }
     ])
