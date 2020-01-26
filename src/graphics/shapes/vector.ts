@@ -1,7 +1,7 @@
 import { Vector } from "../../math";
 import { CanvasShape, UpdateFunction } from "../canvas";
 
-export default class VectorCanvas implements CanvasShape {
+export default class VectorArrow implements CanvasShape {
 
   color: string;
   name: string;
@@ -25,7 +25,7 @@ export default class VectorCanvas implements CanvasShape {
     }
   }
 
-  draw (ctx: CanvasRenderingContext2D) {
+  drawCanvas (ctx: CanvasRenderingContext2D) {
     const size = 10;
     const width = 0.7;
 

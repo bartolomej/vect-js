@@ -7,18 +7,28 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist')
+    contentBase: path.resolve(__dirname, 'build')
   },
   entry: {
-    'bundle.js': [
-      path.resolve(__dirname, './src/test/index.ts')
+    'index.js': [
+      path.resolve(__dirname, './docs/index.ts')
     ]
+  },
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name]'
   },
   plugins: [
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, 'src', 'test', 'index.html'),
-        to: path.resolve(__dirname, 'dist')
+        from: path.resolve(__dirname, 'docs', 'index.html'),
+        to: path.resolve(__dirname, 'build')
+      }
+    ]),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, 'docs', 'style.css'),
+        to: path.resolve(__dirname, 'build')
       }
     ]),
   ],

@@ -6,7 +6,7 @@ export enum Weight {
   LIGHTER = 'lighter'
 }
 
-export default class TextCanvas implements CanvasShape {
+export default class Text implements CanvasShape {
 
   x: number;
   y: number;
@@ -25,7 +25,7 @@ export default class TextCanvas implements CanvasShape {
     this.color = color || '#000000';
   }
 
-  draw (ctx: CanvasRenderingContext2D) {
+  drawCanvas (ctx: CanvasRenderingContext2D) {
     ctx.save();
     ctx.scale(1, -1);
     ctx.textAlign = 'center';

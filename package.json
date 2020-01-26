@@ -1,24 +1,42 @@
 {
-  "name": "ts-frontend-starter",
+  "name": "vect-js",
   "version": "1.0.0",
-  "description": "Front end starter template with TypeScript, Babel, Webpack, Jest configurations.",
-  "main": "index.js",
+  "description": "Mathematical animation engine for the web.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "watch": "webpack --watch",
     "test": "jest",
     "build": "webpack --config webpack.prod.js",
+    "build-examples": "webpack --config webpack.dev.js",
+    "deploy": "npm run build-examples && node deploy.js",
     "start": "npm run serve && npm run watch",
+    "publish": "npm build && npm publish",
     "serve": "webpack-dev-server --open --config webpack.dev.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bartolomej/vect-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bartolomej/vect-js/issues"
+  },
+  "homepage": "https://bartolomej.github.io/vect-js/",
   "keywords": [
-    "template"
+    "mathematics",
+    "animation",
+    "graphics",
+    "canvas"
   ],
   "author": "Bartolomej Kozorog",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
+    "@types/bezier-js": "0.0.8",
+    "@types/chroma-js": "^1.4.3",
     "@types/jest": "^24.9.0",
+    "@types/marked": "^0.7.2",
     "@types/node": "^13.1.8",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
@@ -26,7 +44,9 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "gh-pages": "^2.2.0",
     "jest": "^24.9.0",
+    "marked": "^0.8.0",
     "mini-css-extract-plugin": "^0.9.0",
     "style-loader": "^1.1.2",
     "ts-jest": "^24.3.0",
@@ -39,6 +59,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "bezier-js": "^2.5.1",
     "chroma-js": "^2.1.0"
   }
 }
