@@ -11,6 +11,7 @@ export interface CanvasParams {
   displayBasis?: boolean;
   displayGrid?: boolean;
   displayNumbers?: boolean;
+  enableMouseMove?: boolean;
 }
 
 export interface CanvasShape {
@@ -44,6 +45,7 @@ export default class Canvas {
   displayGrid: boolean;
   displayNumbers: boolean;
   backgroundColor: string;
+  enableMouseMove: boolean;
 
   externalShapes: Array<CanvasShape>;
   internalShapes: Array<CanvasShape>;
@@ -54,8 +56,9 @@ export default class Canvas {
   onUpdate: Function;
   ticker: number;
 
-  mouseMove: Vector;
-  mousePosition: [Vector, Vector];
+  // untransformed position [current, previous]
+  mouseAbsolutePosition: [Vector, Vector];
+  mousePosition: Vector;
   mouseDown: boolean;
 
   constructor (params: HTMLElement | CanvasParams) {
@@ -66,6 +69,7 @@ export default class Canvas {
       this.displayGrid = true;
       this.displayNumbers = true;
       this.backgroundColor = '#FFFFFF';
+      this.enableMouseMove = false;
       this.createCanvas();
     } else {
       this.container = params.container;
@@ -74,6 +78,7 @@ export default class Canvas {
       this.displayGrid = isParam(params.displayGrid, true);
       this.displayNumbers = isParam(params.displayNumbers, true);
       this.backgroundColor = isParam(params.backgroundColor, '#FFFFFF');
+      this.enableMouseMove = isParam(params.enableMouseMove, false);
       this.createCanvas(params.width, params.height);
     }
     this.ticker = 0;
@@ -83,6 +88,7 @@ export default class Canvas {
     this.translateVector = new Vector([0, 0]);
     this.startRender();
     this.registerEvents();
+    this.container.style.cursor = this.enableMouseMove ? 'grab' : 'default';
   }
 
   // initial translation => moves origin to canvas center
@@ -141,19 +147,27 @@ export default class Canvas {
 
   private onMouseDown (evt: any) {
     this.mouseDown = true;
+    if (this.enableMouseMove) {
+      this.container.style.cursor = 'grabbing';
+    }
   }
 
   private onMouseUp (evt: any) {
     this.mouseDown = false;
+    if (this.enableMouseMove) {
+      this.container.style.cursor = 'grab';
+    }
   }
 
   private onMouseMove (evt: any) {
-    const elePos = getMousePos(this.container, evt);
-    let t = new Vector([elePos.x, elePos.y]).subtract(this.getTranslate());
-    const position = this.getTransform().inverse2D().vectorProduct(t);
-    if (!this.mousePosition) this.mousePosition = [position, position];
-    this.mousePosition = [position, this.mousePosition[0]];
-    this.mouseMove = this.mousePosition[0].subtract(this.mousePosition[1]);
+    const position = getMousePos(this.container, evt);
+    const abs = new Vector([position.x, position.y]);
+    if (!this.mouseAbsolutePosition) this.mouseAbsolutePosition = [abs,abs];
+    // save absolute mouse position (without transformations)
+    this.mouseAbsolutePosition = [abs, this.mouseAbsolutePosition[0]];
+    // save transformed mouse position
+    const translated = abs.subtract(this.getTranslate());
+    this.mousePosition = this.getTransform().inverse2D().vectorProduct(translated);
   }
 
   private createCanvas (width?: number, height?: number) {
@@ -222,8 +236,10 @@ export default class Canvas {
   }
 
   private onTick () {
-    if (this.mouseDown) {
-      this.translateVector = this.translateVector.add(this.mouseMove);
+    if (this.mouseDown && this.enableMouseMove) {
+      this.translateVector = this.translateVector.add(
+        this.mouseAbsolutePosition[0].subtract(this.mouseAbsolutePosition[1])
+      );
     }
   }
 
@@ -284,7 +300,6 @@ function line (ctx: any, p0: Vector, p1: Vector) {
   ctx.lineTo(-p1.x, -p1.y);
 }
 
-// https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 function getMousePos (canvas: HTMLElement, evt: any) {
   let rect = canvas.getBoundingClientRect();
   return {

@@ -35,10 +35,6 @@ export default function (container) {
     }
   }
 
-  vect.onUpdate = function () {
-    this.transform(new Matrix([[0.9999, 0], [0, 0.9999]]));
-  };
-
   return {
     vect,
     description: 'Example vector field',
