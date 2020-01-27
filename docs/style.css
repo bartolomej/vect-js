@@ -6,15 +6,43 @@
 
 body {
     font-family: 'Raleway', sans-serif;
+    transition: all 1s ease-in-out;
 }
 
-#container {
+
+header {
+    position: absolute;
+    padding: 10px;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
+
+header button {
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    background: none;
+    color: #db2950;
+}
+
+#docs-container {
     width: 40%;
-    margin: 0 auto;
+    margin: 10% auto;
+}
+
+@media (max-width: 1000px) {
+    #docs-container {
+        width: 70%;
+    }
 }
 
 @media (max-width: 700px) {
-    #container {
+    #docs-container {
         width: 90%;
     }
 }
@@ -35,17 +63,17 @@ h4 {
     margin-bottom: 5px;
 }
 
-#docs code {
+code {
     font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
     font-size: 0.8em;
 }
 
-#docs pre {
+pre {
     padding: 20px !important;
     border-radius: 20px;
 }
 
-#docs p > code {
+code {
     padding: .2em .4em;
     margin: 0;
     font-size: 85%;
@@ -53,18 +81,25 @@ h4 {
     border-radius: 3px;
 }
 
-#examples {
+#examples-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
+    margin: 10% 0;
+    transition: all 1s ease-in-out;
 }
 
-#examples button {
+#examples-container button {
     outline: none;
     cursor: pointer;
 }
 
-#canvas-container {
-    height: 100vh;
-    width: 100vw;
+canvas {
+    transition: 1s ease;
+    opacity: 0;
+}
+
+.fade-up {
+    opacity: 1;
 }

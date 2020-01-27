@@ -1,9 +1,8 @@
-import { Canvas, Circle, Matrix, Vector, VectorArrow } from "../index";
+import { Canvas, Circle, Matrix, Vector, VectorArrow } from "../src/index";
 import chroma from 'chroma-js';
 
 
-export default function () {
-  const container = document.getElementById('canvas-container');
+export default function (container) {
   const vect = new Canvas({
     container,
     backgroundColor: '#000000',
@@ -36,19 +35,13 @@ export default function () {
     }
   }
 
-  let c = new Circle(new Vector([0, 0]), 10);
-  // TODO: declarative update API
-  c.onMouseOver = function () {
-    return {
-      color: 'red',
-      size: 1.2
-    }
-  };
-  vect.addShape(c);
-
   vect.onUpdate = function () {
     this.transform(new Matrix([[0.9999, 0], [0, 0.9999]]));
   };
 
-  return vect;
+  return {
+    vect,
+    description: 'Example vector field',
+    title: 'Vector Field'
+  }
 }

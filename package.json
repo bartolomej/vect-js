@@ -5,14 +5,16 @@
   "main": "dist/lib/index.js",
   "types": "dist/types",
   "scripts": {
-    "watch": "webpack --watch",
     "test": "jest",
-    "build": "tsc --module commonjs",
-    "build:docs": "webpack --config webpack.dev.js",
+    "start": "npm run serve:examples && webpack --watch",
+    "start:docs": "npm run serve:docs && webpack --watch",
+    "build": "tsc",
+    "build:docs:dev": "webpack --config webpack.dev.js --config-name docs",
+    "build:examples": "webpack --config webpack.dev.js --config-name examples",
     "deploy:docs": "npm run build-examples && node deploy.js",
-    "start": "npm run serve && npm run watch",
     "publish:patch": "npm version patch --no-git-tag-version && npm build && npm publish",
-    "serve": "webpack-dev-server --open --config webpack.dev.js"
+    "serve:docs": "webpack-dev-server --open --config webpack.dev.js --config-name docs",
+    "serve:examples": "webpack-dev-server --open --config webpack.dev.js --config-name examples"
   },
   "repository": {
     "type": "git",
@@ -62,6 +64,7 @@
   },
   "dependencies": {
     "bezier-js": "^2.5.1",
-    "chroma-js": "^2.1.0"
+    "chroma-js": "^2.1.0",
+    "core-js-compat": "^3.4.7"
   }
 }

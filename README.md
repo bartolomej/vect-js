@@ -14,7 +14,7 @@ Install via npm `npm i vect-js`
 import Vect from "vect-js";
 
 const vect = Vect({
-    document.getElementById('container'),
+    document.getElementById('docs-container'),
     backgroundColor: '#000000',
     displayNumbers: false,
     displayBasis: false,

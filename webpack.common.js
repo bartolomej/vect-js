@@ -1,15 +1,8 @@
-const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 
 module.exports = {
-  mode: 'development',
-  entry: {
-    'index.js': [
-      path.resolve(__dirname, './src/index.ts')
-    ]
-  },
   module: {
     rules: [
       {
@@ -28,7 +21,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.css', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js' ],
   },
   plugins: [
     new CleanWebpackPlugin(),

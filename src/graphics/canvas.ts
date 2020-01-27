@@ -4,6 +4,8 @@ import Text from "./shapes/text";
 
 export interface CanvasParams {
   container: HTMLElement;
+  width?: number;
+  height?: number;
   backgroundColor?: string;
   coordinatesDelta?: number;
   displayBasis?: boolean;
@@ -64,6 +66,7 @@ export default class Canvas {
       this.displayGrid = true;
       this.displayNumbers = true;
       this.backgroundColor = '#FFFFFF';
+      this.createCanvas();
     } else {
       this.container = params.container;
       this.coordinatesDelta = isParam(params.coordinatesDelta, 200);
@@ -71,13 +74,13 @@ export default class Canvas {
       this.displayGrid = isParam(params.displayGrid, true);
       this.displayNumbers = isParam(params.displayNumbers, true);
       this.backgroundColor = isParam(params.backgroundColor, '#FFFFFF');
+      this.createCanvas(params.width, params.height);
     }
     this.ticker = 0;
     this.externalShapes = [];
     this.internalShapes = [];
     this.transformMatrix = new Matrix([[1, 0], [0, 1]]);
     this.translateVector = new Vector([0, 0]);
-    this.createCanvas();
     this.startRender();
     this.registerEvents();
   }
@@ -123,6 +126,12 @@ export default class Canvas {
     this.externalShapes.push(s);
   }
 
+  addShapes (s: Array<CanvasShape>) {
+    for (let shape of s) {
+      this.externalShapes.push(shape);
+    }
+  }
+
   // returns max x,y value that is visible on canvas
   getMax () {
     let t = new Vector([0, 0]).add(this.getTranslate());
@@ -147,10 +156,10 @@ export default class Canvas {
     this.mouseMove = this.mousePosition[0].subtract(this.mousePosition[1]);
   }
 
-  private createCanvas () {
+  private createCanvas (width?: number, height?: number) {
     const canvas = document.createElement('canvas');
-    canvas.width = this.container.clientWidth;
-    canvas.height = this.container.clientHeight;
+    canvas.width = width || this.container.clientWidth;
+    canvas.height = height || this.container.clientHeight;
     canvas.style.background = this.backgroundColor;
     this.container.appendChild(canvas);
     this.ctx = canvas.getContext('2d');
@@ -158,14 +167,12 @@ export default class Canvas {
   }
 
   private registerEvents () {
-    const parent = document.getElementById(this.container.id);
-    parent.addEventListener('mousemove', this.onMouseMove.bind(this));
-    parent.addEventListener('mousedown', this.onMouseDown.bind(this));
-    parent.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.container.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.container.addEventListener('mouseup', this.onMouseUp.bind(this));
   }
 
   private onWindowResize () {
-    this.container = document.getElementById(this.container.id);
     this.ctx.canvas.width = this.container.clientWidth;
     this.ctx.canvas.height = this.container.clientHeight;
   }
@@ -221,7 +228,7 @@ export default class Canvas {
   }
 
   destroy () {
-    this.startRender();
+    this.stopRender();
     this.container.removeChild(this.ctx.canvas);
   }
 
