@@ -1,6 +1,8 @@
 import { Vector } from "../../math";
 import { CanvasShape, UpdateFunction } from "../canvas";
 
+// TODO: refactor to mutable VectorArrow objects - update mechanism
+
 export default class VectorArrow implements CanvasShape {
 
   color: string;

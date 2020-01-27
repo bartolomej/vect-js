@@ -2,7 +2,7 @@ import { Matrix, Vector } from '../math'
 import Text from "./shapes/text";
 
 
-export interface CanvasParams {
+export interface CanvasProps {
   container: HTMLElement;
   width?: number;
   height?: number;
@@ -61,7 +61,7 @@ export default class Canvas {
   mousePosition: Vector;
   mouseDown: boolean;
 
-  constructor (params: HTMLElement | CanvasParams) {
+  constructor (params: HTMLElement | CanvasProps) {
     if (params instanceof HTMLElement) {
       this.container = params;
       this.coordinatesDelta = 200;
@@ -122,6 +122,16 @@ export default class Canvas {
 
   transform (m: Matrix) {
     this.transformMatrix = this.transformMatrix.matrixProduct(m);
+  }
+
+  zoomIn (rate?: number) {
+    const zoomRate = rate || 1.0001;
+    this.transform(new Matrix([[zoomRate, 0], [0, zoomRate]]));
+  }
+
+  zoomOut (rate?: number) {
+    const zoomRate = rate || 0.9999;
+    this.transform(new Matrix([[zoomRate, 0], [0, zoomRate]]));
   }
 
   translate (v: Vector) {

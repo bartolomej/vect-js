@@ -1,4 +1,4 @@
-import { Canvas, Circle, Matrix, Vector, VectorArrow } from "../src/index";
+import { Canvas, Vector, VectorArrow } from "../src/index";
 
 
 export default function (container) {
@@ -10,9 +10,11 @@ export default function (container) {
     displayGrid: false
   });
 
-  const v1 = new VectorArrow(null, new Vector([100,50]), '#FFFFFF');
-  const v2 = new VectorArrow(null, new Vector([50,100]), '#FFFFFF');
-  const sum1 = new VectorArrow(null, v1.vector.add(v2.vector), '#db002f');
+  let p0 = new Vector([-50,-100]);
+
+  const v1 = new VectorArrow(p0, new Vector([100,50]), '#FFFFFF');
+  const v2 = new VectorArrow(p0, new Vector([50,100]), '#FFFFFF');
+  const sum1 = new VectorArrow(p0, v1.vector.add(v2.vector), '#db002f');
 
   vect.addShapes([v1,v2,sum1]);
 

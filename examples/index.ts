@@ -16,12 +16,13 @@ function loadExamples (parent?: HTMLElement) {
     exampleContainer.classList.add('example');
     const textContainer = document.createElement('div');
     textContainer.classList.add('left');
-    const title = document.createElement('h1');
+    const title = document.createElement('h3');
     const desc = document.createElement('p');
     const canvasContainer = document.createElement('div');
     canvasContainer.classList.add('right');
 
-    textContainer.append(title, desc);
+    // TODO: append description with live code link
+    textContainer.append(title);
     exampleContainer.append(textContainer, canvasContainer);
 
     parent.appendChild(exampleContainer);

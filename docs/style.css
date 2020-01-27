@@ -48,7 +48,9 @@ header button {
 }
 
 h1 {
+    text-shadow: #db2950 2px 2px;
     text-align: center;
+    font-size: 3.5em;
     margin-top: 50px;
     margin-bottom: 20px;
 }
@@ -61,6 +63,13 @@ h2 {
 h4 {
     margin-top: 20px;
     margin-bottom: 5px;
+}
+
+/* BADGE */
+#docs-container > p:first-of-type {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
 }
 
 code {

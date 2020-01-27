@@ -7,6 +7,5 @@ webpack.dev.js
 webpack.prod.js
 .idea
 src
-dist/**.test.js
 docs
 build

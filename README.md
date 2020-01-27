@@ -1,39 +1,51 @@
-# Vect.js
+# vect-js
 
 ![](https://img.shields.io/npm/v/vect-js)
 
-> vect-js library makes it easier to create interactive
-> mathematical simulation or animations for the web
+Easily create interactive mathematical simulation or animations for the web.
+<br>
+WARNING! This library is still in early development and is not only for experimental and testing usage.
 
-## Usage
+## Demo
 
-Install via npm `npm i vect-js`
+- [Vector field](https://bartolomej.github.io/vector-field/)
 
-#### Initialization
+## Installing
+
+```bash
+npm i vect-js
+```
+
+## Using 
+
+Minimal example rendering two vectors and their sum.
 ```typescript
 import Vect from "vect-js";
 
-const vect = Vect({
-    document.getElementById('docs-container'),
+// tell vect where to render ui
+const vectContainer = document.body;
+
+const vect = new Vect({
+    container: vectContainer,
     backgroundColor: '#000000',
     displayNumbers: false,
     displayBasis: false,
-    displayGrid: false
+    displayGrid: false,
+    enableMouseMove: true
 });
+
+// starting position of vector arrow (default 0,0)
+const p0 = new Vector([0,0]);
+
+const v1 = new VectorArrow(p0, new Vector([100,50]), '#FFFFFF');
+const v2 = new VectorArrow(p0, new Vector([50,100]), '#FFFFFF');
+const sum1 = new VectorArrow(p0, v1.vector.add(v2.vector), '#db002f');
+
+// add shapes to render
+vect.addShapes([v1,v2,sum1]);
 ```
 
-#### Abstract math objects
-```typescript
-import { Matrix, Vector } from 'vect-js'
-
-let v1 = new Vector([1, 1, 2]);
-let v2 = new Vector([1, 3, 2]);
-
-v1.add(v2); // [2, 4, 4]
-```
-
-
-#### Rendering shapes
+#### Updating shapes
 ```typescript
 import { Circle, VectorArrow } from 'vect-js';
 
@@ -42,24 +54,22 @@ let circle = new Circle(new Vector([0, 0]), 10);
 
 // on render update callback
 circle.onUpdate = function () {
-  // add velocity to position
+  // update position with velocity vector
   this.position = this.position.add(new Vector([10,10]));
 }
-
-// add shape to rendering context
-vect.addShape(circle);
 ```
 
-#### Rendering updates
+#### Updating coordinate system
 ```typescript
 vect.onUpdate = function () {
 
-  // translate canvas
+  // translate coordinates
   this.translate(new Vector([10, 100]));
 
-  // transform canvas (zoom, skew)
+  // transform coordinates (zoom, skew)
   this.transform(new Matrix([[0.9999, 0], [0, 0.9999]]));
 }
+
 ```
 ## Development
 
