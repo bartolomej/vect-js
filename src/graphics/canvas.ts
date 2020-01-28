@@ -1,38 +1,7 @@
-import { Matrix, Vector } from '../math'
+import { Matrix, Vector } from '../math/index'
 import Text from "./shapes/text";
+import { RenderProps, Shape } from "./types";
 
-
-export interface CanvasProps {
-  container: HTMLElement;
-  width?: number;
-  height?: number;
-  backgroundColor?: string;
-  coordinatesDelta?: number;
-  displayBasis?: boolean;
-  displayGrid?: boolean;
-  displayNumbers?: boolean;
-  enableMouseMove?: boolean;
-}
-
-export interface CanvasShape {
-  drawCanvas: DrawFunction;
-  onUpdate: UpdateFunction;
-  update?: Function;
-  styles?: ShapeStyles;
-}
-
-export interface ShapeStyles {
-  color: string;
-  size: number;
-}
-
-export interface DrawFunction {
-  (ctx: CanvasRenderingContext2D): void;
-}
-
-export interface UpdateFunction {
-  (t: number): void;
-}
 
 export default class Canvas {
 
@@ -47,8 +16,8 @@ export default class Canvas {
   backgroundColor: string;
   enableMouseMove: boolean;
 
-  externalShapes: Array<CanvasShape>;
-  internalShapes: Array<CanvasShape>;
+  externalShapes: Array<Shape>;
+  internalShapes: Array<Shape>;
 
   transformMatrix: Matrix;
   translateVector: Vector;
@@ -61,7 +30,7 @@ export default class Canvas {
   mousePosition: Vector;
   mouseDown: boolean;
 
-  constructor (params: HTMLElement | CanvasProps) {
+  constructor (params: HTMLElement | RenderProps) {
     if (params instanceof HTMLElement) {
       this.container = params;
       this.coordinatesDelta = 200;
@@ -138,11 +107,11 @@ export default class Canvas {
     this.translateVector = this.translateVector.add(v);
   }
 
-  addShape (s: CanvasShape) {
+  addShape (s: Shape) {
     this.externalShapes.push(s);
   }
 
-  addShapes (s: Array<CanvasShape>) {
+  addShapes (s: Array<Shape>) {
     for (let shape of s) {
       this.externalShapes.push(shape);
     }
@@ -235,13 +204,13 @@ export default class Canvas {
     const color = invertColor(this.backgroundColor);
     // VERTICAL AXIS
     for (let x = 0; x < limit.x; x += this.coordinatesDelta) {
-      this.internalShapes.push(new Text(x + '', x, 0, size, color));
-      this.internalShapes.push(new Text(-x + '', -x, 0, size, color));
+      this.internalShapes.push(new Text(x + '', new Vector([x,0]), size, color));
+      this.internalShapes.push(new Text(-x + '', new Vector([-x,0]), size, color));
     }
     // HORIZONTAL AXIS
     for (let y = 0; y < limit.y; y += this.coordinatesDelta) {
-      this.internalShapes.push(new Text(y + '', 0, y, size, color));
-      this.internalShapes.push(new Text(-y + '', 0, -y, size, color));
+      this.internalShapes.push(new Text(y + '', new Vector([0,y]), size, color));
+      this.internalShapes.push(new Text(-y + '', new Vector([0,-y]), size, color));
     }
   }
 
@@ -288,9 +257,6 @@ export default class Canvas {
     }
 
     for (let shape of this.externalShapes) {
-      if (shape.update && this.mousePosition) {
-        shape.update(this.mousePosition[0]);
-      }
       if (shape.onUpdate) {
         shape.onUpdate.call(shape, this.ticker);
       }

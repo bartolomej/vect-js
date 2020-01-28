@@ -1,5 +1,4 @@
 tsconfig.json
-babel.config.js
 deploy.js
 jest.config.js
 webpack.common.js
@@ -8,4 +7,5 @@ webpack.prod.js
 .idea
 src
 docs
+examples
 build
