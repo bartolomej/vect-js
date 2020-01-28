@@ -1,15 +1,15 @@
-import Canvas from "./graphics/canvas";
-import Matrix from "./math/matrix";
-import Vector from "./math/vector";
-import VectorArrow from "./graphics/shapes/vector";
+import Renderer from "./graphics/index";
+import Arrow from "./graphics/shapes/arrow";
 import Text from "./graphics/shapes/text";
 import Circle from "./graphics/shapes/circle";
 
-export {
-  VectorArrow,
+export { Matrix, Vector } from './math/index';
+export { Context } from './graphics/index';
+
+export const Shape = {
+  Arrow,
   Text,
-  Circle,
-  Matrix,
-  Vector,
-  Canvas
+  Circle
 };
+
+export default Renderer;

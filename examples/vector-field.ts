@@ -1,9 +1,9 @@
-import { Canvas, Circle, Matrix, Vector, VectorArrow } from "../src/index";
+import Vect, { Context, Shape, Vector } from "../src/index";
 import chroma from 'chroma-js';
 
 
 export default function (container) {
-  const vect = new Canvas({
+  const vect = Vect(Context.CANVAS_2D, {
     container,
     backgroundColor: '#000000',
     displayNumbers: false,
@@ -23,12 +23,12 @@ export default function (container) {
   for (let y = maxSpan.y - diff; y > -maxSpan.y; y -= diff) {
     for (let x = maxSpan.x - diff; x > -maxSpan.x + diff; x -= diff) {
       let p = new Vector([x, y]);
-      let v = new Vector([Math.cos(x) * 30, Math.sin(y) * 30]);
-      let s = new VectorArrow(p, v);
+      let v = new Vector([Math.cos(x), Math.sin(y)]);
+      let s = new Shape.Arrow(p, v);
+      s.unitScale = true;
+      s.unitScaleFactor = 30;
       s.onUpdate = function (time: number) {
-        const v = getSpeed(this.start, time);
-        this.vector = this.vector.add(v);
-        this.renderVector = this.vector.scalarProduct(Math.pow(this.vector.abs(), -1) * 30);
+        this.vector = this.vector.add(getSpeed(this.position, time));
         this.color = chroma(this.vector.abs(), 1, 0.6, 'hsl').desaturate(0.5).hex();
       };
       vect.addShape(s);

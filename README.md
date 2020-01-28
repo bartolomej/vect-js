@@ -16,16 +16,16 @@ WARNING! This library is still in early development and is not only for experime
 npm i vect-js
 ```
 
-## Using 
+## Usage 
 
 Minimal example rendering two vectors and their sum.
 ```typescript
-import Vect from "vect-js";
+import Vect, { Context, Shape, Vector } from "vect-js";
 
 // tell vect where to render ui
 const vectContainer = document.body;
 
-const vect = new Vect({
+const vect = Vect(Context.CANVAS_2D, {
     container: vectContainer,
     backgroundColor: '#000000',
     displayNumbers: false,
@@ -35,11 +35,11 @@ const vect = new Vect({
 });
 
 // starting position of vector arrow (default 0,0)
-const p0 = new Vector([0,0]);
+const p0 = new Shape.Arrow([0,0]);
 
-const v1 = new VectorArrow(p0, new Vector([100,50]), '#FFFFFF');
-const v2 = new VectorArrow(p0, new Vector([50,100]), '#FFFFFF');
-const sum1 = new VectorArrow(p0, v1.vector.add(v2.vector), '#db002f');
+const v1 = new Shape.Arrow(p0, new Vector([100,50]), '#FFFFFF');
+const v2 = new Shape.Arrow(p0, new Vector([50,100]), '#FFFFFF');
+const sum1 = new Shape.Arrow(p0, v1.vector.add(v2.vector), '#db002f');
 
 // add shapes to render
 vect.addShapes([v1,v2,sum1]);
@@ -47,10 +47,10 @@ vect.addShapes([v1,v2,sum1]);
 
 #### Updating shapes
 ```typescript
-import { Circle, VectorArrow } from 'vect-js';
+import { Shape, Vector } from 'vect-js';
 
 // initialize with position and radius
-let circle = new Circle(new Vector([0, 0]), 10);
+let circle = new Shape.Circle(new Vector([0, 0]), 10);
 
 // on render update callback
 circle.onUpdate = function () {
@@ -76,4 +76,4 @@ vect.onUpdate = function () {
 1. clone repo `git clone https://github.com/bartolomej/vect && cd vect`
 2. install dependencies `npm i`
 3. run tests `npm test`
-4. run example apps `npm start`
+4. run example apps `npm position`

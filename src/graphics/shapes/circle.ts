@@ -1,34 +1,23 @@
-import { CanvasShape, ShapeStyles, UpdateFunction } from "../canvas";
-import { Vector } from "../../math";
+import { Shape, UpdateFunction } from "../types";
+import { Vector } from "../../math/index";
 
-export default class Circle implements CanvasShape {
+export default class Circle implements Shape {
 
-  position: Vector;
   r: number;
   color: string;
   name: string;
-  onUpdate: UpdateFunction;
   onMouseOver: Function;
-  styles: ShapeStyles;
+
+  position: Vector;
+  onUpdate: UpdateFunction;
+  state: Object;
 
   constructor (position: Vector, r: number, color?: string, name?: string) {
     this.position = position;
     this.r = r;
     this.color = color || '#000000';
     this.name = name || 'A';
-    this.styles = { size: r, color: this.color };
-  }
-
-  update (mousePos: Vector) {
-    const isOver = this.distance(mousePos) < this.r;
-    if (isOver && this.onMouseOver) {
-      const styles = this.onMouseOver();
-      if (styles.color) this.color = styles.color;
-      if (styles.size && this.r === this.styles.size) this.r = this.r * styles.size;
-    } else if (!isOver) {
-      this.color = this.styles.color;
-      this.r = this.styles.size;
-    }
+    this.state = {};
   }
 
   distance (v: Vector) {
