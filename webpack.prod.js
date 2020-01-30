@@ -14,7 +14,7 @@ const libConfig = merge(common, {
     ]
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'lib'),
     filename: '[name]',
     library: "vect-js",
     libraryTarget: "umd",

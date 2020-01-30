@@ -25,8 +25,7 @@ export default function (container) {
       let p = new Vector([x, y]);
       let v = new Vector([Math.cos(x), Math.sin(y)]);
       let s = new Shape.Arrow(p, v);
-      s.unitScale = true;
-      s.unitScaleFactor = 30;
+      //s.unitScale = true;
       s.onUpdate = function (time: number) {
         this.vector = this.vector.add(getSpeed(this.position, time));
         this.color = chroma(this.vector.abs(), 1, 0.6, 'hsl').desaturate(0.5).hex();
@@ -35,9 +34,5 @@ export default function (container) {
     }
   }
 
-  return {
-    vect,
-    description: 'Example vector field',
-    title: 'Vector Field'
-  }
+  return vect;
 }

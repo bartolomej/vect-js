@@ -8,4 +8,5 @@ webpack.prod.js
 src
 docs
 examples
+test
 build

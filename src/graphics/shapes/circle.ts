@@ -4,18 +4,19 @@ import { Vector } from "../../math/index";
 export default class Circle implements Shape {
 
   r: number;
-  color: string;
+  fillColor: string;
+  strokeColor: string;
   name: string;
-  onMouseOver: Function;
 
   position: Vector;
   onUpdate: UpdateFunction;
   state: Object;
 
-  constructor (position: Vector, r: number, color?: string, name?: string) {
+  constructor (position: Vector, r: number, fillColor?: string, strokeColor?: string, name?: string) {
     this.position = position;
     this.r = r;
-    this.color = color || '#000000';
+    this.fillColor = fillColor || '#000000';
+    this.strokeColor = strokeColor || '#000000';
     this.name = name || 'A';
     this.state = {};
   }
@@ -27,8 +28,10 @@ export default class Circle implements Shape {
   drawCanvas (ctx: CanvasRenderingContext2D) {
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.r, 0, 2 * Math.PI);
-    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this.strokeColor;
+    ctx.fillStyle = this.fillColor;
     ctx.fill();
+    ctx.stroke();
     ctx.closePath();
   }
 

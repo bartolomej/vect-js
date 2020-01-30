@@ -18,9 +18,5 @@ export default function (container) {
 
   vect.addShapes([v1,v2,sum1]);
 
-  return {
-    vect,
-    description: 'Example vector operations',
-    title: 'Vector operations'
-  }
+  return vect;
 }

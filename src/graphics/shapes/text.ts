@@ -21,7 +21,7 @@ export default class Text implements Shape {
   constructor (text: string, position: Vector, size?: number, color?: string, weight?: Weight) {
     this.position = position;
     this.text = text;
-    this.size = size || 24;
+    this.size = size || 20;
     this.weight = weight || Weight.NORMAL;
     this.color = color || '#000000';
     this.state = {};
