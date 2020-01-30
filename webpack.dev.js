@@ -50,4 +50,21 @@ const examplesConfig = merge(common, commonDev, {
   ],
 });
 
-module.exports = [ docsConfig, examplesConfig ];
+const testConfig = merge(common, commonDev, {
+  name: 'test',
+  entry: {
+    'index.js': [
+      path.resolve(__dirname, 'src', 'test', 'web', 'index.ts')
+    ]
+  },
+  plugins: [
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, 'src', 'test', 'web', 'index.html'),
+        to: path.resolve(__dirname, 'build')
+      }
+    ])
+  ],
+});
+
+module.exports = [ docsConfig, examplesConfig, testConfig ];

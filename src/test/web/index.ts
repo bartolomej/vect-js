@@ -1,7 +1,14 @@
-import Vect, { Shape, Context, Vector } from "../src/index";
+import Vect, { Shape, Context, Vector } from "../../index";
 
+window.addEventListener('load', render);
 
-export default function (container) {
+function render () {
+  const container = document.createElement('div');
+  container.style.height = '100vh';
+  container.style.width = '100vw';
+
+  document.body.appendChild(container);
+
   const vect = Vect(Context.CANVAS_2D, {
     container,
     backgroundColor: '#000000',
@@ -17,6 +24,4 @@ export default function (container) {
   const sum1 = new Shape.Arrow(p0, v1.vector.add(v2.vector), '#db002f');
 
   vect.addShapes([v1,v2,sum1]);
-
-  return vect;
 }

@@ -6,9 +6,10 @@ Easily create interactive mathematical simulation or animations for the web.
 <br>
 WARNING! This library is still in early development and is not only for experimental and testing usage.
 
-## Demo
+## Examples
 
 - [Vector field](https://bartolomej.github.io/vector-field/)
+- code examples available in `examples/` folder
 
 ## Installing
 
@@ -77,3 +78,15 @@ vect.onUpdate = function () {
 2. install dependencies `npm i`
 3. run tests `npm test`
 4. run example apps `npm position`
+
+### Building
+
+There are 4 build configurations:
+- no name - main library
+- test - builds live library tests in the browser
+- docs - builds library documentation with examples
+- examples - builds library usage examples
+
+#### Scripts
+1. Run live hot-reloading `npm run start:<build-config>`
+2. Builds for production `npm run build:<build-config>`

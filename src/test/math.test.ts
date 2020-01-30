@@ -1,5 +1,5 @@
-import Vector from "./vector";
-import Matrix from "./matrix";
+import Vector from "../math/vector";
+import Matrix from "../math/matrix";
 
 
 describe('Test vector class', function () {

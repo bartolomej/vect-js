@@ -1,21 +1,28 @@
 {
   "name": "vect-js",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Mathematical animation engine for the web.",
-  "main": "dist/index.js",
-  "types": "dist/types",
+  "main": "lib/index.js",
+  "types": "lib/types",
   "scripts": {
     "test": "jest",
-    "start": "npm run serve:examples && webpack --watch",
+    "start": "npm run start:examples",
+    "build": "npm run build:lib",
+
     "start:docs": "npm run serve:docs && webpack --watch",
-    "build": "webpack --config webpack.prod.js --config-name lib",
-    "build:docs:dev": "webpack --config webpack.dev.js --config-name docs",
+    "start:test": "npm run serve:test && webpack --watch",
+    "start:examples": "npm run serve:examples && webpack --watch",
+
+    "build:lib": "webpack --config webpack.prod.js --config-name lib",
     "build:docs": "webpack --config webpack.prod.js --config-name docs",
     "build:examples": "webpack --config webpack.dev.js --config-name examples",
-    "deploy:docs": "npm run build:docs:dev && node deploy.js",
-    "publish:patch": "npm version patch --no-git-tag-version && npm build && npm publish",
+
     "serve:docs": "webpack-dev-server --open --config webpack.dev.js --config-name docs",
-    "serve:examples": "webpack-dev-server --open --config webpack.dev.js --config-name examples"
+    "serve:test": "webpack-dev-server --open --config webpack.dev.js --config-name test",
+    "serve:examples": "webpack-dev-server --open --config webpack.dev.js --config-name examples",
+
+    "deploy:docs": "npm run build:docs:dev && node deploy.js",
+    "publish:patch": "npm version patch --no-git-tag-version && npm build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -66,6 +73,7 @@
   "dependencies": {
     "bezier-js": "^2.5.1",
     "chroma-js": "^2.1.0",
-    "core-js-compat": "^3.4.7"
+    "core-js-compat": "^3.4.7",
+    "uuid": "^3.4.0"
   }
 }
