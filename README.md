@@ -1,6 +1,7 @@
 # vect-js
 
 ![](https://img.shields.io/npm/v/vect-js)
+[![Edit empty-glade-v6r37](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/empty-glade-v6r37?fontsize=14&hidenavigation=1&theme=dark)
 
 Easily create interactive mathematical simulation or animations for the web.
 <br>
@@ -10,8 +11,10 @@ This library is still in early development and is not only for experimental and 
 
 ## Examples
 
+- [Vector operations on CodeSandbox](https://codesandbox.io/s/clever-fast-3q4jo?fontsize=14&hidenavigation=1&theme=dark)
+- [Vector field on CodeSandbox](https://codesandbox.io/s/empty-glade-v6r37?fontsize=14&hidenavigation=1&theme=dark)
 - [Vector field](https://bartolomej.github.io/vector-field/)
-- code examples available in `examples/` folder
+- more code examples available in `examples/` folder
 
 ## Installing
 

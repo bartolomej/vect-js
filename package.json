@@ -1,6 +1,6 @@
 {
   "name": "vect-js",
-  "version": "1.0.11",
+  "version": "1.0.14",
   "description": "Mathematical animation engine for the web.",
   "main": "lib/index.js",
   "types": "lib/types",
