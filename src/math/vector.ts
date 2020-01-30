@@ -10,6 +10,18 @@ export default class Vector {
     return this.components.length;
   }
 
+  set x (value: number) {
+    this.components[0] = value;
+  }
+
+  set y (value: number) {
+    this.components[1] = value;
+  }
+
+  set z (value: number) {
+    this.components[2] = value;
+  }
+
   get x () {
     return this.components[0];
   }

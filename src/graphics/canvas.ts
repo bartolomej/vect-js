@@ -5,6 +5,7 @@ import { RenderProps, Shape } from "./types";
 
 export default class Canvas {
 
+  canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   container: HTMLElement;
   animationFrame: number;
@@ -15,6 +16,8 @@ export default class Canvas {
   displayNumbers: boolean;
   backgroundColor: string;
   enableMouseMove: boolean;
+  highPixelDensity: boolean;
+  pixelRatioFactor: number;
 
   externalShapes: Array<Shape>;
   internalShapes: Array<Shape>;
@@ -39,6 +42,8 @@ export default class Canvas {
       this.displayNumbers = true;
       this.backgroundColor = '#FFFFFF';
       this.enableMouseMove = false;
+      this.highPixelDensity = false;
+      this.pixelRatioFactor = null;
       this.createCanvas();
     } else {
       this.container = params.container;
@@ -48,6 +53,8 @@ export default class Canvas {
       this.displayNumbers = isParam(params.displayNumbers, true);
       this.backgroundColor = isParam(params.backgroundColor, '#FFFFFF');
       this.enableMouseMove = isParam(params.enableMouseMove, false);
+      this.highPixelDensity = isParam(params.highPixelDensity, false);
+      this.pixelRatioFactor = isParam(params.pixelRatioFactor, null);
       this.createCanvas(params.width, params.height);
     }
     this.ticker = 0;
@@ -124,6 +131,12 @@ export default class Canvas {
     return new Vector([Math.abs(v.x), Math.abs(v.y)]);
   }
 
+  getRatio () {
+    return this.highPixelDensity
+      ? this.pixelRatioFactor ? this.pixelRatioFactor : getPixelRatio(this.ctx)
+      : 1;
+  }
+
   private onMouseDown (evt: any) {
     this.mouseDown = true;
     if (this.enableMouseMove) {
@@ -150,12 +163,17 @@ export default class Canvas {
   }
 
   private createCanvas (width?: number, height?: number) {
-    const canvas = document.createElement('canvas');
-    canvas.width = width || this.container.clientWidth;
-    canvas.height = height || this.container.clientHeight;
-    canvas.style.background = this.backgroundColor;
-    this.container.appendChild(canvas);
-    this.ctx = canvas.getContext('2d');
+    this.canvas = document.createElement('canvas');
+    this.ctx = this.canvas.getContext('2d');
+    const ratio = this.getRatio();
+    this.canvas.width = (width || this.container.clientWidth) * ratio;
+    this.canvas.height = (height || this.container.clientHeight) * ratio;
+    if (ratio !== 1) {
+      this.canvas.style.width = (width || this.container.clientWidth) + 'px';
+      this.canvas.style.height = (height || this.container.clientHeight) + 'px';
+    }
+    this.canvas.style.background = this.backgroundColor;
+    this.container.appendChild(this.canvas);
     window.addEventListener('resize', this.onWindowResize.bind(this));
   }
 
@@ -166,8 +184,10 @@ export default class Canvas {
   }
 
   private onWindowResize () {
-    this.ctx.canvas.width = this.container.clientWidth;
-    this.ctx.canvas.height = this.container.clientHeight;
+    this.ctx.canvas.width = this.container.clientWidth * this.getRatio();
+    this.ctx.canvas.height = this.container.clientHeight * this.getRatio();
+    this.canvas.style.width = this.container.clientWidth + 'px';
+    this.canvas.style.height = this.container.clientHeight + 'px';
   }
 
   private drawBasis () {
@@ -316,4 +336,19 @@ function invertColor (hex: string, bw?: boolean) {
 function isParam (param: any, defaultValue: any) {
   if (param === undefined) return defaultValue;
   else return param;
+}
+
+function getPixelRatio (ctx: CanvasRenderingContext2D) {
+  let dpr = window.devicePixelRatio || 1;
+    // @ts-ignore
+  let bsr = ctx.webkitBackingStorePixelRatio ||
+    // @ts-ignore
+    ctx.mozBackingStorePixelRatio ||
+    // @ts-ignore
+    ctx.msBackingStorePixelRatio ||
+    // @ts-ignore
+    ctx.oBackingStorePixelRatio ||
+    // @ts-ignore
+    ctx.backingStorePixelRatio || 1;
+  return dpr / bsr;
 }

@@ -10,6 +10,8 @@ export interface RenderProps {
   displayGrid?: boolean;
   displayNumbers?: boolean;
   enableMouseMove?: boolean;
+  highPixelDensity?: boolean;
+  pixelRatioFactor?: number;
 }
 
 export interface Shape {

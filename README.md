@@ -4,7 +4,9 @@
 
 Easily create interactive mathematical simulation or animations for the web.
 <br>
-WARNING! This library is still in early development and is not only for experimental and testing usage.
+⚠️ WARNING! ⚠️
+<br> 
+This library is still in early development and is not only for experimental and testing usage.
 
 ## Examples
 
