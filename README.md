@@ -1,6 +1,7 @@
 # vect-js
 
 ![](https://img.shields.io/npm/v/vect-js)
+<br>
 [![Edit empty-glade-v6r37](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/empty-glade-v6r37?fontsize=14&hidenavigation=1&theme=dark)
 
 Easily create interactive mathematical simulation or animations for the web.
@@ -8,6 +9,8 @@ Easily create interactive mathematical simulation or animations for the web.
 ⚠️ WARNING! ⚠️
 <br> 
 This library is still in early development and is not only for experimental and testing usage.
+
+![](https://media2.giphy.com/media/j1sBpuk28w2ESJRcPG/giphy.gif)
 
 ## Examples
 
@@ -32,12 +35,22 @@ import Vect, { Context, Shape, Vector } from "vect-js";
 const vectContainer = document.body;
 
 const vect = Vect(Context.CANVAS_2D, {
-    container: vectContainer,
-    backgroundColor: '#000000',
-    displayNumbers: false,
-    displayBasis: false,
-    displayGrid: false,
-    enableMouseMove: true
+  // renders canvas inside container
+  container,
+  // sets canvas backgkround color
+  backgroundColor: "#000000",
+  // draws coordinate numbers
+  displayNumbers: false,
+  // draws emphasized basis coordinates (x=0, y=0)
+  displayBasis: false,
+  // draws coordinate grid
+  displayGrid: false,
+  // space between grid coordinate lines
+  coordinatesDelta: 100,
+  // render canvas in high pixel density
+  highPixelDensity: true,
+  // enable drag around with mouse
+  enableMouseMove: true
 });
 
 // starting position of vector arrow (default 0,0)
@@ -58,9 +71,10 @@ import { Shape, Vector } from 'vect-js';
 // initialize with position and radius
 let circle = new Shape.Circle(new Vector([0, 0]), 10);
 
-// on render update callback
+// state update callback called by renderer (60 times per sec)
 circle.onUpdate = function () {
   // update position with velocity vector
+  // NOTE: math object (Vector, Matrix) are immutable
   this.position = this.position.add(new Vector([10,10]));
 }
 ```
@@ -87,10 +101,10 @@ vect.onUpdate = function () {
 ### Building
 
 There are 4 build configurations:
-- no name - main library
-- test - builds live library tests in the browser
-- docs - builds library documentation with examples
-- examples - builds library usage examples
+- *empty* - main library
+- *test* - builds live library tests in the browser
+- *docs* - builds library documentation with examples
+- *examples* - builds library usage examples
 
 #### Scripts
 1. Run live hot-reloading `npm run start:<build-config>`
