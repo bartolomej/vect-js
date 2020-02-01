@@ -8,7 +8,9 @@ Easily create interactive mathematical simulation or animations for the web.
 <br>
 ⚠️ WARNING! ⚠️
 <br> 
-This library is still in early development and is not only for experimental and testing usage.
+This library is still in early development and is not only for experimental and testing usage. Documentation is still of poor quality, because API is still forming.
+<br>
+**First stable and better documented release will be `v1.1.0`**
 
 ![](https://media2.giphy.com/media/j1sBpuk28w2ESJRcPG/giphy.gif)
 
@@ -36,7 +38,7 @@ const vectContainer = document.body;
 
 const vect = Vect(Context.CANVAS_2D, {
   // renders canvas inside container
-  container,
+  container: vectContainer,
   // sets canvas backgkround color
   backgroundColor: "#000000",
   // draws coordinate numbers
@@ -83,13 +85,27 @@ circle.onUpdate = function () {
 ```typescript
 const c = new Shape.Circle(new Vector([0, 0]), 10);
 
+// called when shape intersects with mouse position
 c.onHover = function (m: MouseState) {
-  // user hovered over circle
-};
-c.onDrag = function (m: MouseState) {
-  // user dragged the circle
+  // update state variables
+  this.position = new Vector([0,0]);
+  // you can also return ShapeStyles object that updates shape
+  return {
+    fillColor: '#FFFFFF',
+    strokeColor: '#FFFFFF',
+    size: 2
+  }
 };
 
+// called when pressed mouse intersects with shape
+c.onDrag = function (m: MouseState) {
+  // update state variables or/and return styles
+};
+
+// called when mouse clicks on shape
+c.onClick = function (m: MouseState) {
+  // update state variables or/and return styles
+};
 ```
 
 #### Updating coordinate system

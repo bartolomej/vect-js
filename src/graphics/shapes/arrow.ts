@@ -1,5 +1,6 @@
 import { Vector } from "../../math/index";
 import { Shape, UpdateFunction } from "../types";
+import { isParam } from "../../utils";
 
 
 export default class Arrow implements Shape {
@@ -22,7 +23,7 @@ export default class Arrow implements Shape {
     this.color = color || '#000000';
     this.name = name || 'a';
     this.unitScale = false;
-    this.drawArrow = drawArrow || true;
+    this.drawArrow = isParam(drawArrow, true);
     this.unitScaleFactor = 1;
     this.state = {};
   }

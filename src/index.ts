@@ -6,7 +6,7 @@ import Circle from "./graphics/shapes/circle";
 export { Matrix, Vector } from './math/index';
 export { Context } from './graphics/index';
 
-export { Button, Input, InputProps, InputType, Controls, ControlsType, styles } from './ui/index';
+export { Button, Input, InputProps, InputType, Controls, ControlsType } from './ui/index';
 
 export const Shape = {
   Arrow,

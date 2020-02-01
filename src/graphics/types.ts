@@ -14,16 +14,30 @@ export interface RenderProps {
   pixelRatioFactor?: number;
 }
 
+export interface ShapeStyles {
+  fillColor: string;
+  strokeColor: string;
+  size: number;
+  cursor: string;
+}
+
 export interface Shape {
   drawCanvas: DrawFunction;
   onUpdate: UpdateFunction;
-  update?: MouseCallback; // called by renderer
   onHover?: MouseCallback;
   onClick?: MouseCallback;
   onDrag?: MouseCallback;
   position: Vector;
   state: Object;
+  intersectsMouse?: IntersectsMouse;
+  isPressed?: boolean;
+  styles?: ShapeStyles;
+  defaultStyles?: ShapeStyles;
   // add style prop for declarative style updates in the future
+}
+
+export interface IntersectsMouse {
+  (position: Vector): boolean;
 }
 
 export interface MouseCallback {

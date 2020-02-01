@@ -1,77 +1,77 @@
 import Vect, { Context, Controls, InputType, Shape, Vector } from "../../index";
 import { ControlsType } from "../../ui/index";
+import { MouseState } from "../../graphics/types";
 
-window.addEventListener('load', render);
+window.addEventListener('load', onLoad);
 
-function render () {
-  const container = document.createElement('div');
-  container.style.height = '100vh';
-  container.style.width = '100vw';
+function onLoad () {
+  const pendulumContainer = document.createElement('div');
+  pendulumContainer.classList.add('section');
 
-  document.body.appendChild(container);
+  const fieldContainer = document.createElement('div');
+  fieldContainer.classList.add('section');
+
+  document.getElementById('container').append(pendulumContainer, fieldContainer);
+
+  renderPendulum(pendulumContainer);
+  renderField(fieldContainer);
+}
+
+function renderPendulum (container: HTMLElement) {
 
   const vect = Vect(Context.CANVAS_2D, {
     container,
     backgroundColor: '#000000',
     displayNumbers: false,
     displayBasis: false,
-    displayGrid: true,
-    highPixelDensity: true
+    displayGrid: false,
   });
 
-
-  const arrow1 = new Shape.Arrow(null, new Vector([100,50]), '#FFFFFF');
-  const arrow2 = new Shape.Arrow(null, new Vector([50,100]), '#FFFFFF');
-  const sum = new Shape.Arrow(null, arrow1.vector.add(arrow2.vector), '#db002f');
-  const sub = new Shape.Arrow(null, arrow1.vector.subtract(arrow2.vector), '#0032db');
-  const dot = new Shape.Circle(new Vector([arrow1.vector.dotProduct(arrow2.vector), 0]), 10, '#FFFFFF', '#FFFFFF');
-
-  vect.onUpdate = function () {
-    sum.vector = arrow1.vector.add(arrow2.vector);
-    sub.vector = arrow1.vector.subtract(arrow2.vector);
-    dot.position = new Vector([arrow1.vector.dotProduct(arrow2.vector), 0]);
-  };
-
-  vect.addShapes([arrow1,arrow2,sum,sub,dot]);
-
-
-  let maxMinValues = {
-    maxValue: 100,
-    minValue: -100,
-  };
-
-  let controls = new Controls([
-    {
-      type: ControlsType.INPUT,
-      label: 'vector1 i',
-      inputType: InputType.RANGE,
-      value: arrow1.vector.x,
-      ...maxMinValues,
-      onInput: e => arrow1.vector.x = e.target.valueAsNumber
-    },
-    {
-      type: ControlsType.INPUT,
-      label: 'vector1 j',
-      inputType: InputType.RANGE,
-      value: arrow1.vector.y,
-      ...maxMinValues,
-      onInput: e => arrow1.vector.y = e.target.valueAsNumber
-    },
-    {
-      type: ControlsType.INPUT,
-      label: 'j component',
-      inputType: InputType.RANGE,
-      value: arrow2.vector.x,
-      ...maxMinValues,
-      onInput: e => arrow2.vector.x = e.target.valueAsNumber
-    },
-    {
-      type: ControlsType.BUTTON,
-      text: 'test',
-      ...maxMinValues,
-      onClick: e => arrow2.vector.y = e.target.valueAsNumber
+  const pendulumEnd = new Vector([0,-100]);
+  const pendulum = new Shape.Arrow(null, pendulumEnd, '#FFFFFF', null, false);
+  const ball = new Shape.Circle(pendulumEnd, 10, '#FFFFFF');
+  ball.onDrag = function (m: MouseState) {
+    this.position = m.position;
+    pendulum.vector = m.position;
+    return {
+      fillColor: '#FF0000'
     }
-  ], { color: '#FFFFFF' });
+  };
 
-  document.body.appendChild(controls.domElement);
+  vect.addShapes([pendulum, ball]);
+}
+
+function renderField (container: HTMLElement) {
+
+  const vect = Vect(Context.CANVAS_2D, {
+    container,
+    backgroundColor: '#000000',
+    displayNumbers: false,
+    displayBasis: false,
+    displayGrid: false,
+  });
+
+  const maxSpan = vect.getMax();
+  const diff = 50;
+
+  function getSpeed (position: Vector, time: number) {
+    return new Vector([
+      Math.sin(position.x + position.y + time),
+      Math.sin(position.x + time) + Math.cos(time)
+    ]);
+  }
+
+  for (let y = maxSpan.y - diff; y > -maxSpan.y; y -= diff) {
+    for (let x = maxSpan.x - diff; x > -maxSpan.x + diff; x -= diff) {
+      let p = new Vector([x, y]);
+      let v = new Vector([Math.cos(x), Math.sin(y)]);
+      let s = new Shape.Arrow(p, v, '#FFFFFF');
+
+      s.onUpdate = function (time: number) {
+        this.vector = this.vector.add(getSpeed(this.position, time));
+      };
+      vect.addShape(s);
+    }
+  }
+
 }

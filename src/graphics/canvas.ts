@@ -1,7 +1,7 @@
 import { Matrix, Vector } from '../math/index'
 import Text from "./shapes/text";
 import { MouseState, RenderProps, Shape } from "./types";
-import { getMousePos, getPixelRatio, invertColor, isParam } from "../utils";
+import { call, getMousePos, getPixelRatio, invertColor, isParam } from "../utils";
 
 
 export default class Canvas {
@@ -146,15 +146,39 @@ export default class Canvas {
       : 1;
   }
 
-  private onMouseDown (evt: any) {
+  private onMouseClick (evt: Event) {
+    this.externalShapes.forEach(s => {
+      const intersects = call(s.intersectsMouse, s, [this.mousePosition]);
+      if (intersects && s.onClick) {
+        const styles = call(s.onClick, s, [this.getMouseState()]);
+        s.styles = { ...s.styles, ...styles };
+      }
+    })
+  }
+
+  private onMouseDown (evt: Event) {
     this.mouseDown = true;
+    // calls internal mouse state update callback
+    this.externalShapes.forEach(s => {
+      const intersects = call(s.intersectsMouse, s, [this.mousePosition]);
+      if (intersects && s.isPressed !== undefined) {
+        s.isPressed = true;
+      }
+    });
     if (this.enableMouseMove) {
       this.container.style.cursor = 'grabbing';
     }
   }
 
-  private onMouseUp (evt: any) {
+  private onMouseUp (evt: Event) {
     this.mouseDown = false;
+    // calls internal mouse state update callback
+    this.externalShapes.forEach(s => {
+      const intersects = call(s.intersectsMouse, s, [this.mousePosition]);
+      if (intersects && s.isPressed !== undefined) {
+        s.isPressed = false;
+      }
+    });
     if (this.enableMouseMove) {
       this.container.style.cursor = 'grab';
     }
@@ -190,6 +214,7 @@ export default class Canvas {
     this.container.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.container.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.container.addEventListener('click', this.onMouseClick.bind(this));
   }
 
   private onWindowResize () {
@@ -251,6 +276,33 @@ export default class Canvas {
     }
   }
 
+  private onShapeUpdate (shape: Shape) {
+    // skip shape if doesn't implement required function and var
+    if (shape.intersectsMouse === undefined || shape.isPressed === undefined) {
+      return;
+    }
+    const intersects = shape.intersectsMouse(this.mousePosition);
+    const mouseState = this.getMouseState();
+    // call onDrag function implemented by external consumer and update styles
+    if (shape.isPressed) {
+      const styles = call(shape.onDrag, shape, [mouseState]);
+      if (styles) {
+        shape.styles = { ...shape.styles, ...styles };
+      }
+    }
+    // call onHover function implemented by external consumer and update styles
+    if (intersects && !shape.isPressed) {
+      const styles = call(shape.onHover, shape, [mouseState]);
+      if (styles) {
+        shape.styles = { ...shape.styles, ...styles };
+      }
+    }
+    // if mouse doesn't intersects shape any more reset styles
+    if (!intersects) {
+      shape.styles = shape.defaultStyles;
+    }
+  }
+
   destroy () {
     this.stopRender();
     this.container.removeChild(this.ctx.canvas);
@@ -286,18 +338,14 @@ export default class Canvas {
     }
 
     for (let shape of this.externalShapes) {
-
-      // calls internal shape update callback
-      // call only if mousePosition exists
-      if (shape.update && this.mouseAbsolutePosition) {
-        shape.update.call(shape, this.getMouseState())
+      // calls internal update callback
+      if (this.mouseAbsolutePosition) {
+        this.onShapeUpdate(shape);
       }
-
       // calls external update callback
       if (shape.onUpdate) {
         shape.onUpdate.call(shape, this.ticker);
       }
-
       shape.drawCanvas(this.ctx);
     }
 

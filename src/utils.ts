@@ -1,3 +1,8 @@
+export function call (fn: Function, ctx: any, args: Array<any>) {
+  if (fn) return fn.apply(ctx, args);
+  else return null;
+}
+
 export function isParam (param: any, defaultValue: any) {
   if (param === undefined) return defaultValue;
   else return param;

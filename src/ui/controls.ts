@@ -43,4 +43,8 @@ export default class Controls {
     this.domElement = container;
   }
 
+  append (container: HTMLElement) {
+    container.style.position = 'relative';
+    container.appendChild(this.domElement);
+  }
 }
