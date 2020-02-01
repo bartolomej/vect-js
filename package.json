@@ -17,7 +17,7 @@
     "serve:docs": "webpack-dev-server --open --config webpack.dev.js --config-name docs",
     "serve:test": "webpack-dev-server --open --config webpack.dev.js --config-name test",
     "serve:examples": "webpack-dev-server --open --config webpack.dev.js --config-name examples",
-    "deploy:docs": "npm run build:docs:dev && node deploy.js",
+    "deploy:docs": "npm run build:docs && node deploy.js",
     "publish:patch": "npm run build && npm version patch --no-git-tag-version && npm publish"
   },
   "repository": {

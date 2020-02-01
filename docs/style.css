@@ -55,6 +55,10 @@ h1 {
     margin-bottom: 20px;
 }
 
+p {
+    margin: 10px 0;
+}
+
 h2 {
     margin-top: 40px;
     margin-bottom: 10px;
@@ -63,13 +67,6 @@ h2 {
 h4 {
     margin-top: 20px;
     margin-bottom: 5px;
-}
-
-/* BADGE */
-#docs-container > p:first-of-type {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
 }
 
 code {
