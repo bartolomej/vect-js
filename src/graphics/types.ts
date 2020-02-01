@@ -17,9 +17,23 @@ export interface RenderProps {
 export interface Shape {
   drawCanvas: DrawFunction;
   onUpdate: UpdateFunction;
+  update?: MouseCallback; // called by renderer
+  onHover?: MouseCallback;
+  onClick?: MouseCallback;
+  onDrag?: MouseCallback;
   position: Vector;
   state: Object;
   // add style prop for declarative style updates in the future
+}
+
+export interface MouseCallback {
+  (m: MouseState): void;
+}
+
+export interface MouseState {
+  position: Vector;
+  absolutePosition: Vector;
+  isDown: boolean;
 }
 
 export interface DrawFunction {

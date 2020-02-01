@@ -1,6 +1,7 @@
 import { Matrix, Vector } from '../math/index'
 import Text from "./shapes/text";
-import { RenderProps, Shape } from "./types";
+import { MouseState, RenderProps, Shape } from "./types";
+import { getMousePos, getPixelRatio, invertColor, isParam } from "../utils";
 
 
 export default class Canvas {
@@ -28,10 +29,10 @@ export default class Canvas {
   onUpdate: Function;
   ticker: number;
 
-  // untransformed position [current, previous]
-  mouseAbsolutePosition: [Vector, Vector];
-  mousePosition: Vector;
+  // MOUSE STATE VARS
   mouseDown: boolean;
+  mouseAbsolutePosition: [Vector, Vector]; // untransformed position [current, previous]
+  mousePosition: Vector;
 
   constructor (params: HTMLElement | RenderProps) {
     if (params instanceof HTMLElement) {
@@ -78,6 +79,14 @@ export default class Canvas {
   // initial transformation => flips space in y direction
   private get transformZero () {
     return new Matrix([[1, 0], [0, -1]]);
+  }
+
+  getMouseState (): MouseState {
+    return {
+      isDown: this.mouseDown,
+      absolutePosition: this.mouseAbsolutePosition[0],
+      position: this.mousePosition
+    }
   }
 
   getTransform () {
@@ -277,9 +286,18 @@ export default class Canvas {
     }
 
     for (let shape of this.externalShapes) {
+
+      // calls internal shape update callback
+      // call only if mousePosition exists
+      if (shape.update && this.mouseAbsolutePosition) {
+        shape.update.call(shape, this.getMouseState())
+      }
+
+      // calls external update callback
       if (shape.onUpdate) {
         shape.onUpdate.call(shape, this.ticker);
       }
+
       shape.drawCanvas(this.ctx);
     }
 
@@ -294,61 +312,4 @@ function line (ctx: any, p0: Vector, p1: Vector) {
   ctx.lineTo(p1.x, p1.y);
   ctx.moveTo(-p0.x, -p0.y);
   ctx.lineTo(-p1.x, -p1.y);
-}
-
-function getMousePos (canvas: HTMLElement, evt: any) {
-  let rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
-  };
-}
-
-function invertColor (hex: string, bw?: boolean) {
-  if (hex.indexOf('#') === 0) {
-    hex = hex.slice(1);
-  }
-  if (hex.length === 3) {
-    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-  }
-  if (hex.length !== 6) {
-    throw new Error('Invalid HEX color.');
-  }
-  let r = parseInt(hex.slice(0, 2), 16),
-    g = parseInt(hex.slice(2, 4), 16),
-    b = parseInt(hex.slice(4, 6), 16);
-  if (bw) {
-    return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-      ? '#000000'
-      : '#FFFFFF';
-  }
-  return "#" +
-    padZero((255 - r).toString(16)) +
-    padZero((255 - g).toString(16)) +
-    padZero((255 - b).toString(16));
-
-  function padZero (str: string, len = 2) {
-    let zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
-  }
-}
-
-function isParam (param: any, defaultValue: any) {
-  if (param === undefined) return defaultValue;
-  else return param;
-}
-
-function getPixelRatio (ctx: CanvasRenderingContext2D) {
-  let dpr = window.devicePixelRatio || 1;
-    // @ts-ignore
-  let bsr = ctx.webkitBackingStorePixelRatio ||
-    // @ts-ignore
-    ctx.mozBackingStorePixelRatio ||
-    // @ts-ignore
-    ctx.msBackingStorePixelRatio ||
-    // @ts-ignore
-    ctx.oBackingStorePixelRatio ||
-    // @ts-ignore
-    ctx.backingStorePixelRatio || 1;
-  return dpr / bsr;
 }
