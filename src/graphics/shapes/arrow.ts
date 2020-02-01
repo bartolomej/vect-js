@@ -6,6 +6,7 @@ export default class Arrow implements Shape {
 
   color: string;
   name: string;
+  drawArrow: boolean;
   unitScale: boolean;
   unitScaleFactor: number;
 
@@ -15,12 +16,13 @@ export default class Arrow implements Shape {
   position: Vector;
   state: Object;
 
-  constructor (v0: Vector, v1: Vector, color?: string, name?: string) {
+  constructor (v0: Vector, v1: Vector, color?: string, name?: string, drawArrow?: boolean) {
     this.position = v0 || new Vector([0, 0]);
     this.vector = v1;
     this.color = color || '#000000';
     this.name = name || 'a';
     this.unitScale = false;
+    this.drawArrow = drawArrow || true;
     this.unitScaleFactor = 1;
     this.state = {};
   }
@@ -44,18 +46,22 @@ export default class Arrow implements Shape {
     ctx.lineTo(head.x, head.y);
     ctx.moveTo(head.x, head.y);
 
-    const dxLeft = Math.cos(a - width) * size;
-    const dxRight = Math.cos(a + width) * size;
-    const dyTop = Math.sin(a - width) * size;
-    const dyBottom = Math.sin(a + width) * size;
+    // draw vector arrow shape
+    if (this.drawArrow) {
+      const dxLeft = Math.cos(a - width) * size;
+      const dxRight = Math.cos(a + width) * size;
+      const dyTop = Math.sin(a - width) * size;
+      const dyBottom = Math.sin(a + width) * size;
 
-    if (this.vector.x < 0) {
-      ctx.lineTo(head.x + dxLeft, head.y + dyTop);
-      ctx.lineTo(head.x + dxRight, head.y + dyBottom);
-    } else {
-      ctx.lineTo(head.x - dxLeft, head.y - dyTop);
-      ctx.lineTo(head.x - dxRight, head.y - dyBottom);
+      if (this.vector.x < 0) {
+        ctx.lineTo(head.x + dxLeft, head.y + dyTop);
+        ctx.lineTo(head.x + dxRight, head.y + dyBottom);
+      } else {
+        ctx.lineTo(head.x - dxLeft, head.y - dyTop);
+        ctx.lineTo(head.x - dxRight, head.y - dyBottom);
+      }
     }
+
     ctx.closePath();
     ctx.fill();
     ctx.stroke();

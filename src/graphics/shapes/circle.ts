@@ -1,4 +1,4 @@
-import { Shape, UpdateFunction } from "../types";
+import { MouseCallback, MouseState, Shape, UpdateFunction } from "../types";
 import { Vector } from "../../math/index";
 
 export default class Circle implements Shape {
@@ -10,6 +10,8 @@ export default class Circle implements Shape {
 
   position: Vector;
   onUpdate: UpdateFunction;
+  onHover: MouseCallback;
+  onDrag: MouseCallback;
   state: Object;
 
   constructor (position: Vector, r: number, fillColor?: string, strokeColor?: string, name?: string) {
@@ -23,6 +25,18 @@ export default class Circle implements Shape {
 
   distance (v: Vector) {
     return this.position.subtract(v).abs();
+  }
+
+  update (m: MouseState) {
+    const dp = this.position.subtract(m.position);
+    const d = Math.sqrt(dp.x**2 + dp.y**2);
+
+    if (d <= this.r && !m.isDown) {
+      this.onHover && this.onHover.call(this, m);
+    }
+    if (d <= this.r && m.isDown) {
+      this.onDrag && this.onDrag.call(this, m);
+    }
   }
 
   drawCanvas (ctx: CanvasRenderingContext2D) {

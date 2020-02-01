@@ -79,6 +79,19 @@ circle.onUpdate = function () {
 }
 ```
 
+#### Mouse events on shapes
+```typescript
+const c = new Shape.Circle(new Vector([0, 0]), 10);
+
+c.onHover = function (m: MouseState) {
+  // user hovered over circle
+};
+c.onDrag = function (m: MouseState) {
+  // user dragged the circle
+};
+
+```
+
 #### Updating coordinate system
 ```typescript
 vect.onUpdate = function () {
