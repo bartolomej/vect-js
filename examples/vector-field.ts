@@ -10,8 +10,8 @@ export default function (container) {
     displayBasis: false,
     displayGrid: false
   });
-  const maxSpan = vect.getMax();
-  const diff = 50;
+  const [topLeft, bottomRight] = vect.getBoundaries();
+  const delta = 50;
 
   function getSpeed (position: Vector, time: number) {
     return new Vector([
@@ -20,12 +20,13 @@ export default function (container) {
     ]);
   }
 
-  for (let y = maxSpan.y - diff; y > -maxSpan.y; y -= diff) {
-    for (let x = maxSpan.x - diff; x > -maxSpan.x + diff; x -= diff) {
+  for (let y = topLeft.y - delta; y > bottomRight.y; y -= delta) {
+    for (let x = topLeft.x - delta; x < bottomRight.x + delta; x += delta) {
       let p = new Vector([x, y]);
       let v = new Vector([Math.cos(x), Math.sin(y)]);
       let s = new Shape.Arrow(p, v);
-      //s.unitScale = true;
+      s.unitScale = true;
+      s.unitScaleFactor = 20;
       s.onUpdate = function (time: number) {
         this.vector = this.vector.add(getSpeed(this.position, time));
         this.color = chroma(this.vector.abs(), 1, 0.6, 'hsl').desaturate(0.5).hex();

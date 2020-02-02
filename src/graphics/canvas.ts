@@ -81,19 +81,11 @@ export default class Canvas {
     return new Matrix([[1, 0], [0, -1]]);
   }
 
-  getMouseState (): MouseState {
-    return {
-      isDown: this.mouseDown,
-      absolutePosition: this.mouseAbsolutePosition[0],
-      position: this.mousePosition
-    }
-  }
-
-  getTransform () {
+  getAbsoluteTransform () {
     return this.transformZero.matrixProduct(this.transformMatrix);
   }
 
-  getTranslate () {
+  getAbsoluteTranslate () {
     return this.translateVector.add(this.translateZero);
   }
 
@@ -115,8 +107,8 @@ export default class Canvas {
   }
 
   zoomOut (rate?: number) {
-    const zoomRate = rate || 0.9999;
-    this.transform(new Matrix([[zoomRate, 0], [0, zoomRate]]));
+    const zoomRate = rate || 1.0001;
+    this.transform(new Matrix([[1/zoomRate, 0], [0, 1/zoomRate]]));
   }
 
   translate (v: Vector) {
@@ -133,11 +125,24 @@ export default class Canvas {
     }
   }
 
-  // returns max x,y value that is visible on canvas
-  getMax () {
-    let t = new Vector([0, 0]).add(this.getTranslate());
-    let v = this.getTransform().inverse2D().vectorProduct(t);
-    return new Vector([Math.abs(v.x), Math.abs(v.y)]);
+  getMouseState (): MouseState {
+    return {
+      isDown: this.mouseDown,
+      absolutePosition: this.mouseAbsolutePosition[0],
+      position: this.mousePosition
+    }
+  }
+
+  // returns max top-left, bottom-right coordinate visible on canvas
+  getBoundaries () {
+    let v0 = new Vector([this.canvas.width/2, this.canvas.height/2]);
+    let v1 = new Vector([this.canvas.width/2, this.canvas.height/2]);
+    let b0 = this.transformMatrix.inverse2D().vectorProduct(v0.add(this.translateVector).scalarProduct(-1));
+    let b1 = this.transformMatrix.inverse2D().vectorProduct(v1.subtract(this.translateVector));
+    return [
+      new Vector([b0.x, -b0.y]),
+      new Vector([b1.x, -b1.y]),
+    ]
   }
 
   getRatio () {
@@ -191,8 +196,8 @@ export default class Canvas {
     // save absolute mouse position (without transformations)
     this.mouseAbsolutePosition = [abs, this.mouseAbsolutePosition[0]];
     // save transformed mouse position
-    const translated = abs.subtract(this.getTranslate());
-    this.mousePosition = this.getTransform().inverse2D().vectorProduct(translated);
+    const translated = abs.subtract(this.getAbsoluteTranslate());
+    this.mousePosition = this.getAbsoluteTransform().inverse2D().vectorProduct(translated);
   }
 
   private createCanvas (width?: number, height?: number) {
@@ -225,53 +230,52 @@ export default class Canvas {
   }
 
   private drawBasis () {
-    const limit = this.getMax();
+    const [topLeft, bottomRight] = this.getBoundaries();
     this.ctx.beginPath();
     this.ctx.strokeStyle = invertColor(this.backgroundColor);
     this.ctx.lineWidth = 2;
-    line(this.ctx, new Vector([0, 0]), new Vector([0, limit.y]));
-    line(this.ctx, new Vector([0, 0]), new Vector([limit.x, 0]));
+    // VERTICAL BASIS (x = 0)
+    line(this.ctx, new Vector([0, topLeft.y]), new Vector([0, bottomRight.y]));
+    // HORIZONTAL BASIS (y = 0)
+    line(this.ctx, new Vector([topLeft.x, 0]), new Vector([bottomRight.x, 0]));
     this.ctx.stroke();
   }
 
   private drawGrid () {
-    const limit = this.getMax();
+    const [topLeft, bottomRight] = this.getBoundaries();
+    const delta = this.coordinatesDelta;
+    const color = invertColor(this.backgroundColor);
     this.ctx.beginPath();
-    this.ctx.strokeStyle = invertColor(this.backgroundColor) + '80';
+    this.ctx.strokeStyle = color + '80';
     this.ctx.lineWidth = 1;
     // VERTICAL LINES
-    for (let x = 0; x < limit.x; x += this.coordinatesDelta) {
-      line(this.ctx, new Vector([x, 0]), new Vector([x, limit.y]));
-      line(this.ctx, new Vector([-x, 0]), new Vector([-x, limit.y]));
+    for (let x = topLeft.x - (topLeft.x % delta); x <= bottomRight.x - (bottomRight.x % delta); x += delta) {
+      line(this.ctx,
+        new Vector([x, topLeft.y]),
+        new Vector([x, bottomRight.y])
+      );
+      if (this.displayNumbers) {
+        this.internalShapes.push(new Text(x + '', new Vector([x,0]), 15, color));
+      }
     }
     // HORIZONTAL LINES
-    for (let y = 0; y < limit.y; y += this.coordinatesDelta) {
-      line(this.ctx, new Vector([0, y]), new Vector([limit.x, y]));
-      line(this.ctx, new Vector([0, -y]), new Vector([limit.x, -y]));
+    for (let y = topLeft.y - (topLeft.y % delta); y >= bottomRight.y - (bottomRight.y % delta); y -= delta) {
+      line(this.ctx,
+        new Vector([topLeft.x, y]),
+        new Vector([bottomRight.x, y])
+      );
+      if (this.displayNumbers) {
+        this.internalShapes.push(new Text(y + '', new Vector([0,-y]), 15, color));
+      }
     }
     this.ctx.stroke();
   }
 
-  private drawNumbers () {
-    const limit = this.getMax();
-    const size = 15;
-    const color = invertColor(this.backgroundColor);
-    // VERTICAL AXIS
-    for (let x = 0; x < limit.x; x += this.coordinatesDelta) {
-      this.internalShapes.push(new Text(x + '', new Vector([x,0]), size, color));
-      this.internalShapes.push(new Text(-x + '', new Vector([-x,0]), size, color));
-    }
-    // HORIZONTAL AXIS
-    for (let y = 0; y < limit.y; y += this.coordinatesDelta) {
-      this.internalShapes.push(new Text(y + '', new Vector([0,y]), size, color));
-      this.internalShapes.push(new Text(-y + '', new Vector([0,-y]), size, color));
-    }
-  }
-
   private onTick () {
+    // TODO: fix mouse translation
     if (this.mouseDown && this.enableMouseMove) {
       this.translateVector = this.translateVector.add(
-        this.mouseAbsolutePosition[0].subtract(this.mouseAbsolutePosition[1])
+        this.mouseAbsolutePosition[0].subtract(this.mouseAbsolutePosition[1]).scalarProduct(0.6)
       );
     }
   }
@@ -321,14 +325,13 @@ export default class Canvas {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-    const m = this.getTransform();
-    const t = this.getTranslate();
+    const m = this.getAbsoluteTransform();
+    const t = this.getAbsoluteTranslate();
     this.ctx.transform(m.x.x, m.x.y, m.y.x, m.y.y, t.x, t.y);
 
     // draw coordinates
     if (this.displayGrid) this.drawGrid();
     if (this.displayBasis) this.drawBasis();
-    if (this.displayNumbers) this.drawNumbers();
 
     this.onTick();
     if (this.onUpdate) this.onUpdate.call(this);
@@ -349,7 +352,7 @@ export default class Canvas {
       shape.drawCanvas(this.ctx);
     }
 
-    this.ticker += 0.01;
+    this.ticker += 1/60;
     this.animationFrame = requestAnimationFrame(this.render.bind(this));
   }
 
@@ -358,6 +361,4 @@ export default class Canvas {
 function line (ctx: any, p0: Vector, p1: Vector) {
   ctx.moveTo(p0.x, p0.y);
   ctx.lineTo(p1.x, p1.y);
-  ctx.moveTo(-p0.x, -p0.y);
-  ctx.lineTo(-p1.x, -p1.y);
 }

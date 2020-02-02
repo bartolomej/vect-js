@@ -1,5 +1,5 @@
-import Vect, { Context, Controls, InputType, Shape, Vector } from "../../index";
-import { ControlsType } from "../../ui/index";
+import Vect, { Context, Controls, InputType, Matrix, Shape, Vector } from "../../index";
+import chroma from 'chroma-js';
 import { MouseState } from "../../graphics/types";
 
 window.addEventListener('load', onLoad);
@@ -18,13 +18,18 @@ function onLoad () {
 }
 
 function renderPendulum (container: HTMLElement) {
-
-  const vect = Vect(Context.CANVAS_2D, {
+  // @ts-ignore
+  window.Vector = Vector;
+  // @ts-ignore
+  window.Matrix = Matrix;
+  // @ts-ignore
+  window.vect = Vect(Context.CANVAS_2D, {
     container,
     backgroundColor: '#000000',
-    displayNumbers: false,
-    displayBasis: false,
-    displayGrid: false,
+    displayNumbers: true,
+    displayBasis: true,
+    displayGrid: true,
+    enableMouseMove: true
   });
 
   const pendulumEnd = new Vector([0,-100]);
@@ -38,7 +43,8 @@ function renderPendulum (container: HTMLElement) {
     }
   };
 
-  vect.addShapes([pendulum, ball]);
+  // @ts-ignore
+  window.vect.addShapes([pendulum, ball]);
 }
 
 function renderField (container: HTMLElement) {
@@ -49,10 +55,11 @@ function renderField (container: HTMLElement) {
     displayNumbers: false,
     displayBasis: false,
     displayGrid: false,
+    enableMouseMove: true
   });
 
-  const maxSpan = vect.getMax();
-  const diff = 50;
+  const [topLeft, bottomRight] = vect.getBoundaries();
+  const delta = 50;
 
   function getSpeed (position: Vector, time: number) {
     return new Vector([
@@ -61,14 +68,16 @@ function renderField (container: HTMLElement) {
     ]);
   }
 
-  for (let y = maxSpan.y - diff; y > -maxSpan.y; y -= diff) {
-    for (let x = maxSpan.x - diff; x > -maxSpan.x + diff; x -= diff) {
+  for (let y = topLeft.y - delta; y > bottomRight.y; y -= delta) {
+    for (let x = topLeft.x - delta; x < bottomRight.x + delta; x += delta) {
       let p = new Vector([x, y]);
       let v = new Vector([Math.cos(x), Math.sin(y)]);
-      let s = new Shape.Arrow(p, v, '#FFFFFF');
-
+      let s = new Shape.Arrow(p, v);
+      //s.unitScale = true;
+      //s.unitScaleFactor = 20;
       s.onUpdate = function (time: number) {
-        this.vector = this.vector.add(getSpeed(this.position, time));
+        this.vector = getSpeed(this.position, time);
+        this.color = chroma(this.vector.abs(), 1, 0.6, 'hsl').desaturate(0.5).hex();
       };
       vect.addShape(s);
     }
