@@ -1,5 +1,4 @@
 import uuid from 'uuid/v4';
-import "./index.css";
 import { ControlsType } from "./index";
 
 export enum InputType {
@@ -14,6 +13,7 @@ export interface InputProps {
   id?: string;
   inputType: InputType;
   label?: string;
+  step?: number;
   value?: number|string;
   maxValue?: number;
   minValue?: number;
@@ -30,6 +30,7 @@ export default class Input {
   maxValue: number;
   onInput: Function;
   color: string;
+  step: number;
 
   id: string;
   domElement: HTMLElement;
@@ -40,6 +41,7 @@ export default class Input {
     this.inputType = props.inputType;
     this.color = props.color || '#000000';
     this.label = props.label;
+    this.step = props.step || 5;
     this.value = props.value || null;
     this.onInput = props.onInput;
     this.minValue = props.minValue || 0;
@@ -65,6 +67,7 @@ export default class Input {
     const input = document.createElement('input');
     input.id = this.id;
     input.type = this.inputType;
+    input.step = this.step + '';
     input.value = this.value + '' || '';
     input.min = this.minValue + '' || '0';
     input.max = this.maxValue + '' || '1';

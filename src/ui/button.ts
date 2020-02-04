@@ -1,4 +1,3 @@
-import "./index.css";
 import { ControlsType } from "./index";
 
 export interface ButtonProps {
